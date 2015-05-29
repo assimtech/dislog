@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="assimtech/dislog" default="dev">
+
+    <target name="dev" depends="lint,cpd,cs,md,spec"/>
+
+    <target name="lint">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+
+            <fileset dir="src">
+                <modified />
+                <include name="**/*.php" />
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="cpd">
+        <exec executable="vendor/bin/phpcpd" failonerror="true">
+            <arg path="src" />
+        </exec>
+    </target>
+
+    <target name="cs">
+        <exec executable="vendor/bin/phpcs" failonerror="true">
+            <arg value="-p" />
+            <arg value="--standard=phpcs.xml" />
+            <arg value="--extensions=php,inc" />
+            <arg path="." />
+        </exec>
+    </target>
+
+    <target name="md">
+        <exec executable="vendor/bin/phpmd">
+            <arg path="src" />
+            <arg value="text" />
+            <arg value="phpmd.xml" />
+        </exec>
+    </target>
+
+    <target name="spec">
+        <exec executable="vendor/bin/phpspec" failonerror="true">
+            <arg value="run" />
+            <arg value="--no-interaction" />
+            <arg value="--stop-on-failure" />
+        </exec>
+    </target>
+
+</project>

@@ -1,0 +1,25 @@
+{
+    "name": "assimtech/dislog",
+    "type": "library",
+    "description": "API call logger",
+    "homepage": "https://github.com/assimtech/dislog",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "psr/log": "1.*",
+        "doctrine/common": "~2.0",
+
+        "sebastian/phpcpd": "~2.0",
+        "squizlabs/php_codesniffer": "~2.3",
+        "phpmd/phpmd": "~2.2",
+        "phpspec/phpspec": "~2.2",
+        "henrikbjorn/phpspec-code-coverage": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Assimtech\\Dislog\\": "src"
+        }
+    }
+}
