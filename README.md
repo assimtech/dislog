@@ -8,7 +8,12 @@ Dislog is an API call logger. API calls differ from normal log events because th
 
 ## Handlers
 
-# DoctrineObjectManager
+### Stream
+
+This handler accepts a writable stream resource
+
+
+### DoctrineObjectManager
 
 This handler accepts any Doctrine Object Manager:
 
