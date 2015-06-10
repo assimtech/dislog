@@ -1,5 +1,4 @@
 /coverage/
 /vendor/
 /cache.properties
-/composer.lock
 /phpspec.yml
