@@ -6,6 +6,7 @@
 
 Dislog is an API call logger. API calls differ from normal log events because they compose of a request and a response which generally happen at different times.
 
+
 ## Handlers
 
 ### Stream
