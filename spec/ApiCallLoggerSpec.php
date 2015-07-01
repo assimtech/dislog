@@ -14,7 +14,8 @@ class ApiCallLoggerSpec extends ObjectBehavior
 {
     function let(FactoryInterface $factory, HandlerInterface $handler, LoggerInterface $psrLogger)
     {
-        $this->beConstructedWith($factory, $handler, $psrLogger);
+        $options = array();
+        $this->beConstructedWith($factory, $handler, $options, $psrLogger);
     }
 
     function it_is_initializable()
@@ -60,7 +61,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $this->logResponse($apiCall, $response);
     }
 
-    function it_cant_log_request_no_psr_logger(
+    function it_cant_log_request_without_a_psr_logger(
         FactoryInterface $factory,
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
@@ -79,14 +80,12 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setReference($reference)->willReturn($apiCall);
         $apiCall->setRequestTime(Argument::type('float'))->willReturn($apiCall);
 
-        $exceptionMessage = 'failed';
-        $e = new Exception($exceptionMessage);
-        $handler->handle($apiCall)->willThrow($e);
+        $handler->handle($apiCall)->willThrow(new Exception('failed'));
 
         $this->logRequest($request, $endpoint, $method, $reference)->shouldReturn($apiCall);
     }
 
-    function it_cant_log_request_with_psr_logger(
+    function it_cant_log_request_with_a_psr_logger(
         FactoryInterface $factory,
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
@@ -111,12 +110,16 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getMethod()->willReturn($method);
         $apiCall->getReference()->willReturn($reference);
+        $apiCall->getRequest()->willReturn($request);
+        $apiCall->getResponse()->willReturn(null);
 
         $psrLogger->warning($exceptionMessage, array(
             'exception' => $e,
             'endpoint' => $endpoint,
             'method' => $method,
             'reference' => $reference,
+            'request' => $request,
+            'response' => null,
         ))->shouldBeCalled();
 
         $this->logRequest($request, $endpoint, $method, $reference)->shouldReturn($apiCall);
@@ -136,9 +139,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setResponse($response)->willReturn($apiCall);
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
-        $exceptionMessage = 'failed';
-        $e = new Exception($exceptionMessage);
-        $handler->handle($apiCall)->willThrow($e);
+        $handler->handle($apiCall)->willThrow(new Exception('failed'));
 
         $this->logResponse($apiCall, $response);
     }
@@ -146,6 +147,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_cant_log_response_with_psr_logger(
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
+        $request,
         $response,
         $endpoint,
         $method,
@@ -165,14 +167,69 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getMethod()->willReturn($method);
         $apiCall->getReference()->willReturn($reference);
+        $apiCall->getRequest()->willReturn($request);
+        $apiCall->getResponse()->willReturn($response);
 
         $psrLogger->warning($exceptionMessage, array(
             'exception' => $e,
             'endpoint' => $endpoint,
             'method' => $method,
             'reference' => $reference,
+            'request' => $request,
+            'response' => $response,
         ))->shouldBeCalled();
 
         $this->logResponse($apiCall, $response);
+    }
+
+    function it_cant_log_with_psr_logger_and_rethrow(
+        FactoryInterface $factory,
+        HandlerInterface $handler,
+        ApiCallInterface $apiCall,
+        $request,
+        $response,
+        $endpoint,
+        $method,
+        $reference,
+        LoggerInterface $psrLogger
+    ) {
+        $options = array(
+            'suppressHandlerExceptions' => false,
+        );
+
+        $this->beConstructedWith($factory, $handler, $options, $psrLogger);
+
+        $requestTime = 1.2;
+        $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $apiCall->setResponse($response)->willReturn($apiCall);
+        $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
+
+        $exceptionMessage = 'failed';
+        $e = new Exception($exceptionMessage);
+        $handler->handle($apiCall)->willThrow($e);
+
+        $apiCall->getEndpoint()->willReturn($endpoint);
+        $apiCall->getMethod()->willReturn($method);
+        $apiCall->getReference()->willReturn($reference);
+        $apiCall->getRequest()->willReturn($request);
+        $apiCall->getResponse()->willReturn($response);
+
+        $psrLogger->warning($exceptionMessage, array(
+            'exception' => $e,
+            'endpoint' => $endpoint,
+            'method' => $method,
+            'reference' => $reference,
+            'request' => $request,
+            'response' => $response,
+        ))->shouldBeCalled();
+
+        $this
+            ->shouldThrow($e)
+            ->during('logResponse', array(
+                $apiCall,
+                $response
+            ))
+        ;
     }
 }

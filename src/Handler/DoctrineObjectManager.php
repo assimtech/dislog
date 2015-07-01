@@ -8,12 +8,12 @@ use Assimtech\Dislog\Model\ApiCallInterface;
 class DoctrineObjectManager implements HandlerInterface
 {
     /**
-     * @var \Doctrine\Common\Persistence\ObjectManager $objectManager
+     * @var ObjectManager $objectManager
      */
     protected $objectManager;
 
     /**
-     * @param \Doctrine\Common\Persistence\ObjectManager $objectManager
+     * @param ObjectManager $objectManager
      */
     public function __construct(ObjectManager $objectManager)
     {

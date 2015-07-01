@@ -2,10 +2,12 @@
 
 namespace Assimtech\Dislog\Model\Factory;
 
+use Assimtech\Dislog\Model\ApiCallInterface;
+
 interface FactoryInterface
 {
     /**
-     * @return \Assimtech\Dislog\Model\ApiCallInterface
+     * @return ApiCallInterface
      */
     public function create();
 }

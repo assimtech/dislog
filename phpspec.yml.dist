@@ -1,4 +1,4 @@
 suites:
-    AssimtechTempo:
+    AssimtechDislog:
         namespace: Assimtech\Dislog
         psr4_prefix: Assimtech\Dislog

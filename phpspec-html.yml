@@ -1,5 +1,5 @@
 suites:
-    AssimtechTempo:
+    AssimtechDislog:
         namespace: Assimtech\Dislog
         psr4_prefix: Assimtech\Dislog
 
@@ -11,5 +11,3 @@ code_coverage:
         - html
     output:
         html: coverage
-    blacklist:
-        - src/Phar

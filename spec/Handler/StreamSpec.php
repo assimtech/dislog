@@ -78,6 +78,44 @@ class StreamSpec extends ObjectBehavior
         }
     }
 
+    function it_throws_on_write_failure(
+        ApiCallInterface $apiCall,
+        IdentityGeneratorInterface $identityGenerator,
+        DateTime $requestDateTime
+    ) {
+        fclose($this->stream);
+
+        $identity = 'my-id';
+        $endpoint = 'my-endpoint';
+        $requestTime = 987654321.098;
+        $request = '<request />';
+        $requestDateTimeFormatted = '2004-02-12T15:19:21+00:00';
+        $method = 'my-method';
+        $reference = 'my-reference';
+
+        $apiCall->getId()->willReturn(null);
+        $identityGenerator->getIdentity()->willReturn($identity);
+        $apiCall->setId($identity)->shouldBeCalled();
+
+        $apiCall->getEndpoint()->willReturn($endpoint);
+        $apiCall->getRequestTime()->willReturn($requestTime);
+        $apiCall->getDuration()->willReturn(null);
+        $apiCall->getRequest()->willReturn($request);
+        $apiCall->getResponse()->willReturn(null);
+
+        $requestDateTime->format('c')->willReturn($requestDateTimeFormatted);
+        $apiCall->getRequestDateTime()->willReturn($requestDateTime);
+        $apiCall->getMethod()->willReturn($method);
+        $apiCall->getReference()->willReturn($reference);
+
+        $this
+            ->shouldThrow(new RuntimeException('Failed to write to stream'))
+            ->during('handle', array(
+                $apiCall,
+            ))
+        ;
+    }
+
     function it_can_handle_existing_apicall(
         ApiCallInterface $apiCall,
         DateTime $requestDateTime

@@ -7,7 +7,7 @@ use Assimtech\Dislog\Model\ApiCallInterface;
 interface HandlerInterface
 {
     /**
-     * @param \Assimtech\Dislog\Model\ApiCallInterface $apiCall
+     * @param ApiCallInterface $apiCall
      */
     public function handle(ApiCallInterface $apiCall);
 }
