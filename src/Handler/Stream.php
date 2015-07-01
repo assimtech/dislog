@@ -3,35 +3,39 @@
 namespace Assimtech\Dislog\Handler;
 
 use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
+use Assimtech\Dislog\Serializer\SerializerInterface;
 use Assimtech\Dislog\Model\ApiCallInterface;
-use RuntimeException;
 
 class Stream implements HandlerInterface
 {
-    /**
-     * @var IdentityGeneratorInterface $identityGenerator
-     */
-    protected $identityGenerator;
-
     /**
      * @var resource $stream
      */
     protected $stream;
 
     /**
-     * @var string $eol
+     * @var IdentityGeneratorInterface $identityGenerator
      */
-    protected $eol;
+    protected $identityGenerator;
 
     /**
-     * @param IdentityGeneratorInterface $identityGenerator
-     * @param resource $stream
+     * @var SerializerInterface $serializer
      */
-    public function __construct(IdentityGeneratorInterface $identityGenerator, $stream, $eol = "\n")
-    {
-        $this->identityGenerator = $identityGenerator;
+    protected $serializer;
+
+    /**
+     * @param resource $stream
+     * @param IdentityGeneratorInterface $identityGenerator
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(
+        $stream,
+        IdentityGeneratorInterface $identityGenerator,
+        SerializerInterface $serializer
+    ) {
         $this->stream = $stream;
-        $this->eol = $eol;
+        $this->identityGenerator = $identityGenerator;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -44,34 +48,8 @@ class Stream implements HandlerInterface
             $apiCall->setId($id);
         }
 
-        $serializedApiCall = $this->serializeApiCall($apiCall);
-        $writeResult = @fwrite($this->stream, $serializedApiCall);
-        if ($writeResult === false) {
-            throw new RuntimeException('Failed to write to stream');
-        }
-    }
+        $serializedApiCall = call_user_func($this->serializer, $apiCall);
 
-    /**
-     * @param ApiCallInterface $apiCall
-     * @return string
-     */
-    protected function serializeApiCall(ApiCallInterface $apiCall)
-    {
-        $payload = json_encode(array(
-           'endpoint' => $apiCall->getEndpoint(),
-           'requestTime' => $apiCall->getRequestTime(),
-           'duration' => $apiCall->getDuration(),
-           'request' => $apiCall->getRequest(),
-           'response' => $apiCall->getResponse(),
-        ));
-        return sprintf(
-            '[%s] (%s) %s | %s - %s%s',
-            $apiCall->getRequestDateTime()->format('c'),
-            $apiCall->getId(),
-            $apiCall->getMethod(),
-            $apiCall->getReference(),
-            $payload,
-            $this->eol
-        );
+        fwrite($this->stream, $serializedApiCall);
     }
 }

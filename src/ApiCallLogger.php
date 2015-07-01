@@ -57,17 +57,23 @@ class ApiCallLogger implements ApiCallLoggerInterface
 
     /**
      * @param callable[] $processors
-     * @param string $payload
-     * @return string
+     * @param string|null $payload
+     * @return string|null
      */
     protected function processPayload($processors, $payload)
     {
+        if ($payload === null) {
+            return $payload;
+        }
+
+        $castedPayload = (string)$payload;
+
         if (!is_array($processors)) {
             $processors = array($processors);
         }
 
         foreach ($processors as $processor) {
-            $payload = call_user_func($processor, $payload);
+            $payload = call_user_func($processor, $castedPayload);
         }
 
         return $payload;

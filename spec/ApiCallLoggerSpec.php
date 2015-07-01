@@ -27,12 +27,13 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_can_log_request(
         FactoryInterface $factory,
         HandlerInterface $handler,
-        ApiCallInterface $apiCall,
-        $request,
-        $endpoint,
-        $method,
-        $reference
+        ApiCallInterface $apiCall
     ) {
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
+
         $factory->create()->willReturn($apiCall);
 
         $apiCall->setRequest($request)->willReturn($apiCall);
@@ -48,9 +49,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
     function it_can_log_response(
         ApiCallInterface $apiCall,
-        HandlerInterface $handler,
-        $response
+        HandlerInterface $handler
     ) {
+        $response = 'my response';
+
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
 
@@ -65,13 +67,14 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_cant_log_request_without_a_psr_logger(
         FactoryInterface $factory,
         HandlerInterface $handler,
-        ApiCallInterface $apiCall,
-        $request,
-        $endpoint,
-        $method,
-        $reference
+        ApiCallInterface $apiCall
     ) {
         $this->beConstructedWith($factory, $handler);
+
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
 
         $factory->create()->willReturn($apiCall);
 
@@ -90,12 +93,13 @@ class ApiCallLoggerSpec extends ObjectBehavior
         FactoryInterface $factory,
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
-        $request,
-        $endpoint,
-        $method,
-        $reference,
         LoggerInterface $psrLogger
     ) {
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
+
         $factory->create()->willReturn($apiCall);
 
         $apiCall->setRequest($request)->willReturn($apiCall);
@@ -129,10 +133,11 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_cant_log_response_no_psr_logger(
         FactoryInterface $factory,
         HandlerInterface $handler,
-        ApiCallInterface $apiCall,
-        $response
+        ApiCallInterface $apiCall
     ) {
         $this->beConstructedWith($factory, $handler);
+
+        $response = 'my response';
 
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
@@ -148,13 +153,15 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_cant_log_response_with_psr_logger(
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
-        $request,
-        $response,
-        $endpoint,
-        $method,
-        $reference,
         LoggerInterface $psrLogger
     ) {
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
+
+        $response = 'my response';
+
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
 
@@ -187,11 +194,6 @@ class ApiCallLoggerSpec extends ObjectBehavior
         FactoryInterface $factory,
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
-        $request,
-        $response,
-        $endpoint,
-        $method,
-        $reference,
         LoggerInterface $psrLogger
     ) {
         $options = array(
@@ -199,6 +201,13 @@ class ApiCallLoggerSpec extends ObjectBehavior
         );
 
         $this->beConstructedWith($factory, $handler, $options, $psrLogger);
+
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
+
+        $response = 'my response';
 
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
@@ -238,12 +247,13 @@ class ApiCallLoggerSpec extends ObjectBehavior
         FactoryInterface $factory,
         HandlerInterface $handler,
         ApiCallInterface $apiCall,
-        $request,
-        $endpoint,
-        $method,
-        $reference,
         ProcessorInterface $processor
     ) {
+        $request = 'my request';
+        $endpoint = 'my endpoint';
+        $method = 'my method';
+        $reference = 'my reference';
+
         $factory->create()->willReturn($apiCall);
 
         $processor->__invoke($request)->willReturn($request);
@@ -262,9 +272,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_can_process_response(
         ApiCallInterface $apiCall,
         HandlerInterface $handler,
-        $response,
         ProcessorInterface $processor
     ) {
+        $response = 'my response';
+
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
 
@@ -274,6 +285,26 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
         $handler->handle($apiCall)->shouldBeCalled();
+
+        $this->logResponse($apiCall, $response, $processor);
+    }
+
+    function it_wont_process_null_response(
+        ApiCallInterface $apiCall,
+        HandlerInterface $handler,
+        ProcessorInterface $processor
+    ) {
+        $response = null;
+
+        $requestTime = 1.2;
+        $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $apiCall->setResponse($response)->willReturn($apiCall);
+        $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
+
+        $handler->handle($apiCall)->shouldBeCalled();
+
+        $processor->__invoke($response)->shouldNotBeCalled();
 
         $this->logResponse($apiCall, $response, $processor);
     }
