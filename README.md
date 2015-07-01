@@ -10,7 +10,7 @@ Dislog is an API call logger. API calls differ from normal log events because th
 ## Usage
 
 The `ApiCallLogger` may be used to record requests and responses to both client and server site apis. Request and
-response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would sill invoke `logResponse` however to indicate the server accepted the file.
+response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.
 
 ```php
 use Assimtech\Dislog;
@@ -44,9 +44,9 @@ class Api
 }
 
 $stream = fopen('/tmp/my.log', 'a');
-$identityGenerator = new Dislog\Identity\UniqueIdGenerator();
+$uniqueIdentity = new Dislog\Identity\UniqueIdGenerator();
 $stringSerializer = new Dislog\Serializer\StringSerializer();
-$streamHandler = new Dislog\Handler\Stream($stream, $identityGenerator, $stringSerializer);
+$streamHandler = new Dislog\Handler\Stream($stream, $uniqueIdentity, $stringSerializer);
 $apiCallFactory = new Dislog\Model\Factory\ApiCallFactory();
 $apiCallLogger = new Dislog\ApiCallLogger($apiCallFactory, $streamHandler);
 
