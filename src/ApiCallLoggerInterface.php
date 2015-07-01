@@ -6,19 +6,21 @@ interface ApiCallLoggerInterface
 {
     /**
      * @api
-     * @param string $request
+     * @param string|null $request
      * @param string $endpoint
      * @param string $method
      * @param string|null $reference
-     * @return \Assimtech\Dislog\Model\ApiCallInterface
+     * @param callable[] $processors
+     * @return self
      */
-    public function logRequest($request, $endpoint, $method, $reference = null);
+    public function logRequest($request, $endpoint, $method, $reference = null, array $processors = array());
 
     /**
      * @api
-     * @param \Assimtech\Dislog\Model\ApiCallInterface $apiCall
+     * @param Model\ApiCallInterface $apiCall
      * @param string|null $response
+     * @param callable[] $processors
      * @return void
      */
-    public function logResponse(Model\ApiCallInterface $apiCall, $response = null);
+    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, array $processors = array());
 }

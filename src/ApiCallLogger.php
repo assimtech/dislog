@@ -58,8 +58,12 @@ class ApiCallLogger implements ApiCallLoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function logRequest($request, $endpoint, $method, $reference = null)
+    public function logRequest($request, $endpoint, $method, $reference = null, array $processors = array())
     {
+        foreach ($processors as $processor) {
+            $request = call_user_func($processor, $request);
+        }
+
         $apiCall = $this->apiCallFactory->create();
         $apiCall
             ->setRequest($request)
@@ -77,9 +81,14 @@ class ApiCallLogger implements ApiCallLoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function logResponse(Model\ApiCallInterface $apiCall, $response = null)
+    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, array $processors = array())
     {
         $duration = microtime(true) - $apiCall->getRequestTime();
+
+        foreach ($processors as $processor) {
+            $response = call_user_func($processor, $response);
+        }
+
         $apiCall
             ->setResponse($response)
             ->setDuration($duration)
@@ -96,29 +105,29 @@ class ApiCallLogger implements ApiCallLoggerInterface
     {
         try {
             $this->handler->handle($apiCall);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Log handler failures to a Psr-3 Logger if we have one
-            $this->logHandlerException($e, $apiCall);
+            $this->logHandlerException($exception, $apiCall);
 
             if (!$this->options['suppressHandlerExceptions']) {
-                throw $e;
+                throw $exception;
             }
         }
     }
 
     /**
-     * @param Exception $e
+     * @param Exception $exception
      * @param Model\ApiCallInterface $apiCall
      * @return void
      */
-    protected function logHandlerException(Exception $e, Model\ApiCallInterface $apiCall)
+    protected function logHandlerException(Exception $exception, Model\ApiCallInterface $apiCall)
     {
         if ($this->psrLogger === null) {
             return;
         }
 
-        $this->psrLogger->warning($e->getMessage(), array(
-            'exception' => $e,
+        $this->psrLogger->warning($exception->getMessage(), array(
+            'exception' => $exception,
             'endpoint' => $apiCall->getEndpoint(),
             'method' => $apiCall->getMethod(),
             'reference' => $apiCall->getReference(),
