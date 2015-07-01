@@ -56,17 +56,33 @@ class ApiCallLogger implements ApiCallLoggerInterface
     }
 
     /**
+     * @param callable[] $processors
+     * @param string $payload
+     * @return string
+     */
+    protected function processPayload($processors, $payload)
+    {
+        if (!is_array($processors)) {
+            $processors = array($processors);
+        }
+
+        foreach ($processors as $processor) {
+            $payload = call_user_func($processor, $payload);
+        }
+
+        return $payload;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function logRequest($request, $endpoint, $method, $reference = null, array $processors = array())
+    public function logRequest($request, $endpoint, $method, $reference = null, $processors = array())
     {
-        foreach ($processors as $processor) {
-            $request = call_user_func($processor, $request);
-        }
+        $processedRequest = $this->processPayload($processors, $request);
 
         $apiCall = $this->apiCallFactory->create();
         $apiCall
-            ->setRequest($request)
+            ->setRequest($processedRequest)
             ->setEndpoint($endpoint)
             ->setMethod($method)
             ->setReference($reference)
@@ -81,16 +97,14 @@ class ApiCallLogger implements ApiCallLoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, array $processors = array())
+    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, $processors = array())
     {
         $duration = microtime(true) - $apiCall->getRequestTime();
 
-        foreach ($processors as $processor) {
-            $response = call_user_func($processor, $response);
-        }
+        $processedResponse = $this->processPayload($processors, $response);
 
         $apiCall
-            ->setResponse($response)
+            ->setResponse($processedResponse)
             ->setDuration($duration)
         ;
 

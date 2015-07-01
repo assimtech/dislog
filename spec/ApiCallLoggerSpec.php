@@ -8,6 +8,7 @@ use Assimtech\Dislog\Model\Factory\FactoryInterface;
 use Assimtech\Dislog\Handler\HandlerInterface;
 use Psr\Log\LoggerInterface;
 use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\Processor\ProcessorInterface;
 use Exception;
 
 class ApiCallLoggerSpec extends ObjectBehavior
@@ -231,5 +232,49 @@ class ApiCallLoggerSpec extends ObjectBehavior
                 $response
             ))
         ;
+    }
+
+    function it_can_process_request(
+        FactoryInterface $factory,
+        HandlerInterface $handler,
+        ApiCallInterface $apiCall,
+        $request,
+        $endpoint,
+        $method,
+        $reference,
+        ProcessorInterface $processor
+    ) {
+        $factory->create()->willReturn($apiCall);
+
+        $processor->__invoke($request)->willReturn($request);
+
+        $apiCall->setRequest($request)->willReturn($apiCall);
+        $apiCall->setEndpoint($endpoint)->willReturn($apiCall);
+        $apiCall->setMethod($method)->willReturn($apiCall);
+        $apiCall->setReference($reference)->willReturn($apiCall);
+        $apiCall->setRequestTime(Argument::type('float'))->willReturn($apiCall);
+
+        $handler->handle($apiCall)->shouldBeCalled();
+
+        $this->logRequest($request, $endpoint, $method, $reference, $processor)->shouldReturn($apiCall);
+    }
+
+    function it_can_process_response(
+        ApiCallInterface $apiCall,
+        HandlerInterface $handler,
+        $response,
+        ProcessorInterface $processor
+    ) {
+        $requestTime = 1.2;
+        $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $processor->__invoke($response)->willReturn($response);
+
+        $apiCall->setResponse($response)->willReturn($apiCall);
+        $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
+
+        $handler->handle($apiCall)->shouldBeCalled();
+
+        $this->logResponse($apiCall, $response, $processor);
     }
 }
