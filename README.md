@@ -88,11 +88,15 @@ function getMaskedCard($card)
     return $firstSix . $middle . $lastFour;
 }
 
+$endpoint = 'https://my.endpoint';
+$method = 'processPayment';
+$reference = time();
 $card = '4444333322221111';
+$cvv = '123';
 $request = json_encode(array(
-    'amount' => $amount,
+    'amount' => 12.95,
     'card' => $card,
-    'expiry' => $expiry,
+    'expiry' => '2021-04',
     'cvv' => $cvv,
 ));
 
@@ -120,21 +124,21 @@ $apiCallLogger->logRequest(
 This processor is based on php's `str_replace`. It will replace a known string in the payload.
 
 ```php
-use Assimtech\Dislog\Processor;
-
-$request = json_encode(array(
-    'username' => $username,
-    'password' => $password,
-    'body' => $body,
+$maskedCard = getMaskedCard($card);
+$obfuscatedCvv = '***';
+$stringReplace = new Assimtech\Dislog\Processor\StringReplace(array(
+    $card,
+    $cvv,
+), array(
+    $maskedCard,
+    $obfuscatedCvv,
 ));
-
-$maskPassword = new Processor\StringReplace($password, '***');
 $apiCallLogger->logRequest(
     $request,
     $endpoint,
     $method,
     $reference,
-    $maskPassword
+    $stringReplace
 );
 ```
 

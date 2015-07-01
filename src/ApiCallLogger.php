@@ -66,14 +66,14 @@ class ApiCallLogger implements ApiCallLoggerInterface
             return $payload;
         }
 
-        $castedPayload = (string)$payload;
+        $payload = (string)$payload;
 
         if (!is_array($processors)) {
             $processors = array($processors);
         }
 
         foreach ($processors as $processor) {
-            $payload = call_user_func($processor, $castedPayload);
+            $payload = call_user_func($processor, $payload);
         }
 
         return $payload;
