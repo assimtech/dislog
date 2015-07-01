@@ -45,7 +45,8 @@ class Api
 
 $stream = fopen('/tmp/my.log', 'a');
 $identityGenerator = new Dislog\Identity\UniqueIdGenerator();
-$streamHandler = new Dislog\Handler\Stream($identityGenerator, $stream);
+$stringSerializer = new Dislog\Serializer\StringSerializer();
+$streamHandler = new Dislog\Handler\Stream($stream, $identityGenerator, $stringSerializer);
 $apiCallFactory = new Dislog\Model\Factory\ApiCallFactory();
 $apiCallLogger = new Dislog\ApiCallLogger($apiCallFactory, $streamHandler);
 
@@ -74,8 +75,9 @@ This handler accepts any Doctrine Object Manager:
 
 A processor is a callable which is executed on either the request or response payload. They can be used for modifying the request or response before the ApiCall is handled. An example might be to mask credit card numbers or obfuscate a password.
 
-Processors are passed along with the `logRequest` and / or `logResponse` calls to apply to the appropriate payload.
-Note: Processors are not invoked on a null request / response.
+Processors are passed along with the `logRequest` and / or `logResponse` calls to process the appropriate payload.
+
+**Note: Processors are not invoked on a null request / response.**
 
 ```php
 function getMaskedCard($card)
