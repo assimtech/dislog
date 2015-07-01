@@ -98,20 +98,32 @@ class ApiCallLogger implements ApiCallLoggerInterface
             $this->handler->handle($apiCall);
         } catch (Exception $e) {
             // Log handler failures to a Psr-3 Logger if we have one
-            if ($this->psrLogger !== null) {
-                $this->psrLogger->warning($e->getMessage(), array(
-                    'exception' => $e,
-                    'endpoint' => $apiCall->getEndpoint(),
-                    'method' => $apiCall->getMethod(),
-                    'reference' => $apiCall->getReference(),
-                    'request' => $apiCall->getRequest(),
-                    'response' => $apiCall->getResponse(),
-                ));
-            }
+            $this->logHandlerException($e, $apiCall);
 
             if (!$this->options['suppressHandlerExceptions']) {
                 throw $e;
             }
         }
+    }
+
+    /**
+     * @param Exception $e
+     * @param Model\ApiCallInterface $apiCall
+     * @return void
+     */
+    protected function logHandlerException(Exception $e, Model\ApiCallInterface $apiCall)
+    {
+        if ($this->psrLogger === null) {
+            return;
+        }
+
+        $this->psrLogger->warning($e->getMessage(), array(
+            'exception' => $e,
+            'endpoint' => $apiCall->getEndpoint(),
+            'method' => $apiCall->getMethod(),
+            'reference' => $apiCall->getReference(),
+            'request' => $apiCall->getRequest(),
+            'response' => $apiCall->getResponse(),
+        ));
     }
 }
