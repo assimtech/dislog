@@ -13,6 +13,20 @@ The `ApiCallLogger` may be used to record requests and responses to both client 
 response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.
 
 ```php
+/**
+ * @var Assimtech\Dislog\ApiCallLoggerInterface $apiCallLogger
+ */
+$apiCall = $apiCallLogger->logRequest($request, $endpoint, $method, $reference);
+
+$response = $api->transmit($request);
+
+$this->apiCallLogger->logResponse($apiCall, $response);
+```
+
+
+Here's an example of dislog in a fake Api:
+
+```php
 use Assimtech\Dislog;
 
 class Api
