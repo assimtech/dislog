@@ -93,8 +93,10 @@ This handler accepts any Doctrine Object Manager:
 * Doctrine\ODM\MongoDB\DocumentManager
 * Doctrine\ODM\CouchDB\DocumentManager
 
-```php
+**Note: You must setup any mapping to `Assimtech\Dislog\ApiCall` in your object manager**
 
+
+```php
 $doctrineHandler = new Dislog\Handler\DoctrineObjectManager($om);
 ```
 

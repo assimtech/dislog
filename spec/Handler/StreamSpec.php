@@ -7,33 +7,28 @@ use Prophecy\Argument;
 use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
 use Assimtech\Dislog\Serializer\SerializerInterface;
 use Assimtech\Dislog\ApiCallInterface;
-use DateTime;
 use RuntimeException;
 
 class StreamSpec extends ObjectBehavior
 {
-    /**
-     * @var resource $stream
-     */
-    protected $stream;
+    function it_is_initializable(
+        IdentityGeneratorInterface $identityGenerator,
+        SerializerInterface $serializer
+    ) {
+        $stream = 'php://temp';
+        $this->beConstructedWith($stream, $identityGenerator, $serializer);
 
-    function let(IdentityGeneratorInterface $identityGenerator, SerializerInterface $serializer)
-    {
-        $this->stream = fopen('php://temp', 'a+');
-        $this->beConstructedWith($this->stream, $identityGenerator, $serializer);
-    }
-
-    function it_is_initializable()
-    {
         $this->shouldHaveType('Assimtech\Dislog\Handler\Stream');
     }
 
     function it_can_handle_new_apicall(
-        ApiCallInterface $apiCall,
         IdentityGeneratorInterface $identityGenerator,
         SerializerInterface $serializer,
-        DateTime $requestDateTime
+        ApiCallInterface $apiCall
     ) {
+        $stream = fopen('php://temp', 'a+');
+        $this->beConstructedWith($stream, $identityGenerator, $serializer);
+
         $identity = 'my id';
         $serializedApiCall = 'my api call';
 
@@ -45,7 +40,7 @@ class StreamSpec extends ObjectBehavior
 
         $this->handle($apiCall);
 
-        $writtenData = stream_get_contents($this->stream, -1, 0);
+        $writtenData = stream_get_contents($stream, -1, 0);
         if ($writtenData !== $serializedApiCall) {
             throw new RuntimeException(sprintf(
                 "Written data did not match expected data:\nWritten: %s\nExpected: %s",
@@ -56,10 +51,13 @@ class StreamSpec extends ObjectBehavior
     }
 
     function it_can_handle_existing_apicall(
-        ApiCallInterface $apiCall,
+        IdentityGeneratorInterface $identityGenerator,
         SerializerInterface $serializer,
-        DateTime $requestDateTime
+        ApiCallInterface $apiCall
     ) {
+        $stream = fopen('php://temp', 'a+');
+        $this->beConstructedWith($stream, $identityGenerator, $serializer);
+
         $identity = 'my id';
         $serializedApiCall = 'my api call';
 
@@ -69,7 +67,7 @@ class StreamSpec extends ObjectBehavior
 
         $this->handle($apiCall);
 
-        $writtenData = stream_get_contents($this->stream, -1, 0);
+        $writtenData = stream_get_contents($stream, -1, 0);
         if ($writtenData !== $serializedApiCall) {
             throw new RuntimeException(sprintf(
                 "Written data did not match expected data:\nWritten: %s\nExpected: %s",

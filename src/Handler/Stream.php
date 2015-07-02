@@ -24,7 +24,7 @@ class Stream implements HandlerInterface
     protected $serializer;
 
     /**
-     * @param resource $stream
+     * @param resource|string $stream
      * @param IdentityGeneratorInterface $identityGenerator
      * @param SerializerInterface $serializer
      */
@@ -33,9 +33,20 @@ class Stream implements HandlerInterface
         IdentityGeneratorInterface $identityGenerator,
         SerializerInterface $serializer
     ) {
-        $this->stream = $stream;
+        if (is_resource($stream)) {
+            $this->stream = $stream;
+        } else {
+            $this->stream = fopen($stream, 'a');
+        }
         $this->identityGenerator = $identityGenerator;
         $this->serializer = $serializer;
+    }
+
+    public function __destruct()
+    {
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
     }
 
     /**
