@@ -9,8 +9,7 @@ Dislog is an API call logger. API calls differ from normal log events because th
 
 ## Usage
 
-The `ApiCallLogger` may be used to record requests and responses to both client and server site apis. Request and
-response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.
+The `ApiCallLogger` may be used to record requests and responses to both client and server side apis. Request and response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.
 
 ```php
 /**
@@ -73,7 +72,17 @@ $api->doSomething();
 
 ### Stream
 
-This handler accepts a writable stream resource
+This handler accepts a writable stream resource. You must also give it an identity generator and a serializer.
+
+```php
+use Assimtech\Dislog;
+
+$stream = fopen('/tmp/my.log', 'a');
+$uniqueIdentity = new Dislog\Identity\UniqueIdGenerator();
+$stringSerializer = new Dislog\Serializer\StringSerializer();
+
+$streamHandler = new Dislog\Handler\Stream($stream, $uniqueIdentity, $stringSerializer);
+```
 
 
 ### DoctrineObjectManager
@@ -83,6 +92,11 @@ This handler accepts any Doctrine Object Manager:
 * Doctrine\ORM\EntityManager
 * Doctrine\ODM\MongoDB\DocumentManager
 * Doctrine\ODM\CouchDB\DocumentManager
+
+```php
+
+$doctrineHandler = new Dislog\Handler\DoctrineObjectManager($om);
+```
 
 
 ## Processors
