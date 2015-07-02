@@ -2,7 +2,7 @@
 
 namespace Assimtech\Dislog\Serializer;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 
 class StringSerializer implements SerializerInterface
 {

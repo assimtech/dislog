@@ -4,7 +4,7 @@ namespace Assimtech\Dislog\Handler;
 
 use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
 use Assimtech\Dislog\Serializer\SerializerInterface;
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 
 class Stream implements HandlerInterface
 {

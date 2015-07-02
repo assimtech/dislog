@@ -6,7 +6,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
 use Assimtech\Dislog\Serializer\SerializerInterface;
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 use DateTime;
 use RuntimeException;
 

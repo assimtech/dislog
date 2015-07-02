@@ -1,8 +1,8 @@
 <?php
 
-namespace Assimtech\Dislog\Model\Factory;
+namespace Assimtech\Dislog\Factory;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 
 interface FactoryInterface
 {

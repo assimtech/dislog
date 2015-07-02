@@ -1,6 +1,6 @@
 <?php
 
-namespace Assimtech\Dislog\Model;
+namespace Assimtech\Dislog;
 
 use DateTime;
 

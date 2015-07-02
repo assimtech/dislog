@@ -4,10 +4,10 @@ namespace spec\Assimtech\Dislog;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Assimtech\Dislog\Model\Factory\FactoryInterface;
+use Assimtech\Dislog\Factory\FactoryInterface;
 use Assimtech\Dislog\Handler\HandlerInterface;
 use Psr\Log\LoggerInterface;
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 use Assimtech\Dislog\Processor\ProcessorInterface;
 use Exception;
 

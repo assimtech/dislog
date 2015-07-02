@@ -2,7 +2,7 @@
 
 namespace Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 
 interface HandlerInterface
 {

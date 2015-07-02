@@ -60,7 +60,7 @@ $stream = fopen('/tmp/my.log', 'a');
 $uniqueIdentity = new Dislog\Identity\UniqueIdGenerator();
 $stringSerializer = new Dislog\Serializer\StringSerializer();
 $streamHandler = new Dislog\Handler\Stream($stream, $uniqueIdentity, $stringSerializer);
-$apiCallFactory = new Dislog\Model\Factory\ApiCallFactory();
+$apiCallFactory = new Dislog\Factory\ApiCallFactory();
 $apiCallLogger = new Dislog\ApiCallLogger($apiCallFactory, $streamHandler);
 
 $api = new Api($apiCallLogger);

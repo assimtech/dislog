@@ -17,10 +17,10 @@ interface ApiCallLoggerInterface
 
     /**
      * @api
-     * @param Model\ApiCallInterface $apiCall
+     * @param ApiCallInterface $apiCall
      * @param string|null $response
      * @param callable|callable[] $processors
      * @return void
      */
-    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, $processors = array());
+    public function logResponse(ApiCallInterface $apiCall, $response = null, $processors = array());
 }

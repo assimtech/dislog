@@ -4,7 +4,7 @@ namespace spec\Assimtech\Dislog\Serializer;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 use DateTime;
 
 class StringSerializerSpec extends ObjectBehavior

@@ -9,7 +9,7 @@ use Exception;
 class ApiCallLogger implements ApiCallLoggerInterface
 {
     /**
-     * @var Model\Factory\FactoryInterface $apiCallFactory
+     * @var Factory\FactoryInterface $apiCallFactory
      */
     protected $apiCallFactory;
 
@@ -29,13 +29,13 @@ class ApiCallLogger implements ApiCallLoggerInterface
     protected $psrLogger;
 
     /**
-     * @param Model\Factory\FactoryInterface $apiCallFactory
+     * @param Factory\FactoryInterface $apiCallFactory
      * @param Handler\HandlerInterface $handler
      * @param array $options
      * @param LoggerInterface|null $psrLogger
      */
     public function __construct(
-        Model\Factory\FactoryInterface $apiCallFactory,
+        Factory\FactoryInterface $apiCallFactory,
         Handler\HandlerInterface $handler,
         array $options = array(),
         LoggerInterface $psrLogger = null
@@ -103,7 +103,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
     /**
      * {@inheritdoc}
      */
-    public function logResponse(Model\ApiCallInterface $apiCall, $response = null, $processors = array())
+    public function logResponse(ApiCallInterface $apiCall, $response = null, $processors = array())
     {
         $duration = microtime(true) - $apiCall->getRequestTime();
 
@@ -118,10 +118,10 @@ class ApiCallLogger implements ApiCallLoggerInterface
     }
 
     /**
-     * @param Model\ApiCallInterface $apiCall
+     * @param ApiCallInterface $apiCall
      * @return void
      */
-    protected function handleApiCall(Model\ApiCallInterface $apiCall)
+    protected function handleApiCall(ApiCallInterface $apiCall)
     {
         try {
             $this->handler->handle($apiCall);
@@ -137,10 +137,10 @@ class ApiCallLogger implements ApiCallLoggerInterface
 
     /**
      * @param Exception $exception
-     * @param Model\ApiCallInterface $apiCall
+     * @param ApiCallInterface $apiCall
      * @return void
      */
-    protected function logHandlerException(Exception $exception, Model\ApiCallInterface $apiCall)
+    protected function logHandlerException(Exception $exception, ApiCallInterface $apiCall)
     {
         if ($this->psrLogger === null) {
             return;

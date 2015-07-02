@@ -2,7 +2,7 @@
 
 namespace Assimtech\Dislog\Serializer;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\ApiCallInterface;
 
 /**
  * A serializer converts an ApiCallInterface into something a handler can deal with
