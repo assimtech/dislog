@@ -11,7 +11,7 @@ interface ApiCallLoggerInterface
      * @param string $method
      * @param string|null $reference
      * @param callable|callable[] $processors
-     * @return self
+     * @return ApiCallInterface
      */
     public function logRequest($request, $endpoint, $method, $reference = null, $processors = array());
 
