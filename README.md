@@ -149,9 +149,10 @@ $apiCallLogger->logRequest(
 );
 ```
 
+
 ### StringReplace
 
-This processor is based on php's `str_replace`. It will replace a known string in the payload.
+This processor is based on php's `str_replace`. It will replace a known string in a request / response.
 
 ```php
 $maskedCard = getMaskedCard($card);
@@ -169,6 +170,23 @@ $apiCallLogger->logRequest(
     $method,
     $reference,
     $stringReplace
+);
+```
+
+### RegexReplace
+
+This processor is based on php's `preg_replace`. It will replace a regex in a request / response.
+
+```php
+$response = '{social_security_number: "1234567890"}';
+$regexReplace = new Assimtech\Dislog\Processor\RegexReplace(
+    '/social_security_number: "(\d\d)\d+(\d\d)"/',
+    'social_security_number: "$1***$2"'
+);
+$apiCallLogger->logResponse(
+    $apiCall,
+    $response,
+    $regexReplace
 );
 ```
 
