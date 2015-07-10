@@ -87,7 +87,7 @@ $streamHandler = new Dislog\Handler\Stream($stream, $uniqueIdentity, $stringSeri
 
 ### DoctrineObjectManager
 
-This handler accepts any Doctrine Object Manager:
+This handler accepts any `Doctrine\Common\Persistence\ObjectManager`:
 
 * Doctrine\ORM\EntityManager
 * Doctrine\ODM\MongoDB\DocumentManager
