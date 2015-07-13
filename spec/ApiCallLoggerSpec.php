@@ -10,6 +10,7 @@ use Psr\Log\LoggerInterface;
 use Assimtech\Dislog\ApiCallInterface;
 use Assimtech\Dislog\Processor\ProcessorInterface;
 use Exception;
+use InvalidArgumentException;
 
 class ApiCallLoggerSpec extends ObjectBehavior
 {
@@ -287,6 +288,48 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $handler->handle($apiCall)->shouldBeCalled();
 
         $this->logResponse($apiCall, $response, $processor);
+    }
+
+    function it_can_process_response_by_alias(
+        ApiCallInterface $apiCall,
+        HandlerInterface $handler,
+        ProcessorInterface $processor
+    ) {
+        $response = 'my response';
+        $processorAlias = 'my.processor';
+
+        $requestTime = 1.2;
+        $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $processor->__invoke($response)->willReturn($response);
+        $this->setAliasedProcessor($processorAlias, $processor)->shouldReturn($this);
+
+        $apiCall->setResponse($response)->willReturn($apiCall);
+        $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
+
+        $handler->handle($apiCall)->shouldBeCalled();
+
+        $this->logResponse($apiCall, $response, $processorAlias);
+    }
+
+    function it_cant_process_non_callable(
+        ApiCallInterface $apiCall
+    ) {
+        $response = '<response />';
+
+        $requestTime = 1.2;
+        $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $processor = 1234;
+
+        $this
+            ->shouldThrow(new InvalidArgumentException('processor was not a callable'))
+            ->during('logResponse', array(
+                $apiCall,
+                $response,
+                $processor
+            ))
+        ;
     }
 
     function it_wont_process_null_response(

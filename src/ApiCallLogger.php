@@ -4,7 +4,9 @@ namespace Assimtech\Dislog;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Traversable;
 use Exception;
+use InvalidArgumentException;
 
 class ApiCallLogger implements ApiCallLoggerInterface
 {
@@ -29,10 +31,18 @@ class ApiCallLogger implements ApiCallLoggerInterface
     protected $psrLogger;
 
     /**
-     * @param Factory\FactoryInterface $apiCallFactory
-     * @param Handler\HandlerInterface $handler
-     * @param array $options
-     * @param LoggerInterface|null $psrLogger
+     * @var callable[] $aliasedProcessors
+     *      An associative array of processors (alias => callable).
+     *      Adding processor aliases allows the called to reference the alias names of the processors to invoke when
+     *      calling logRequest / logResponse. This allows setup of processors for re-use and easier referencing.
+     */
+    protected $aliasedProcessors;
+
+    /**
+     * @param Factory\FactoryInterface  $apiCallFactory
+     * @param Handler\HandlerInterface  $handler
+     * @param array                     $options
+     * @param LoggerInterface|null      $psrLogger
      */
     public function __construct(
         Factory\FactoryInterface $apiCallFactory,
@@ -53,11 +63,25 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $this->handler = $handler;
         $this->options = $resolver->resolve($options);
         $this->psrLogger = $psrLogger;
+
+        $this->aliasedProcessors = array();
     }
 
     /**
-     * @param callable[] $processors
-     * @param string|null $payload
+     * @param string    $alias
+     * @param callable  $processor
+     * @return self
+     */
+    public function setAliasedProcessor($alias, /* callable */ $processor)
+    {
+        $this->aliasedProcessors[$alias] = $processor;
+
+        return $this;
+    }
+
+    /**
+     * @param callable[]    $processors
+     * @param string|null   $payload
      * @return string|null
      */
     protected function processPayload($processors, $payload)
@@ -66,21 +90,31 @@ class ApiCallLogger implements ApiCallLoggerInterface
             return $payload;
         }
 
-        $payload = (string)$payload;
+        $strPayload = (string)$payload;
 
-        if (!is_array($processors)) {
+        if (!is_array($processors) && !$processors instanceof Traversable) {
             $processors = array($processors);
         }
 
         foreach ($processors as $processor) {
-            $payload = call_user_func($processor, $payload);
+            if (is_string($processor) && isset($this->aliasedProcessors[$processor])) {
+                $processor = $this->aliasedProcessors[$processor];
+            }
+
+            if (!is_callable($processor)) {
+                throw new InvalidArgumentException('processor was not a callable');
+            }
+
+            $strPayload = call_user_func($processor, $strPayload);
         }
 
-        return $payload;
+        return $strPayload;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * Processors are allowed to be an aliased string if setup previously using setAliasedProcessor
      */
     public function logRequest($request, $endpoint, $method, $reference = null, $processors = array())
     {
@@ -102,6 +136,8 @@ class ApiCallLogger implements ApiCallLoggerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * Processors are allowed to be an aliased string if setup previously using setAliasedProcessor
      */
     public function logResponse(ApiCallInterface $apiCall, $response = null, $processors = array())
     {
