@@ -6,7 +6,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Traversable;
 use Exception;
-use InvalidArgumentException;
 
 class ApiCallLogger implements ApiCallLoggerInterface
 {
@@ -99,10 +98,6 @@ class ApiCallLogger implements ApiCallLoggerInterface
         foreach ($processors as $processor) {
             if (is_string($processor) && isset($this->aliasedProcessors[$processor])) {
                 $processor = $this->aliasedProcessors[$processor];
-            }
-
-            if (!is_callable($processor)) {
-                throw new InvalidArgumentException('processor was not a callable');
             }
 
             $strPayload = call_user_func($processor, $strPayload);

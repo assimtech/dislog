@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Assimtech\Dislog\ApiCallInterface;
 use Assimtech\Dislog\Processor\ProcessorInterface;
 use Exception;
-use InvalidArgumentException;
 
 class ApiCallLoggerSpec extends ObjectBehavior
 {
@@ -310,26 +309,6 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $handler->handle($apiCall)->shouldBeCalled();
 
         $this->logResponse($apiCall, $response, $processorAlias);
-    }
-
-    function it_cant_process_non_callable(
-        ApiCallInterface $apiCall
-    ) {
-        $response = '<response />';
-
-        $requestTime = 1.2;
-        $apiCall->getRequestTime()->willReturn($requestTime);
-
-        $processor = 1234;
-
-        $this
-            ->shouldThrow(new InvalidArgumentException('processor was not a callable'))
-            ->during('logResponse', array(
-                $apiCall,
-                $response,
-                $processor
-            ))
-        ;
     }
 
     function it_wont_process_null_response(
