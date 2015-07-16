@@ -109,6 +109,7 @@ Processors are passed along with the `logRequest` and / or `logResponse` calls t
 
 **Note: Processors are not invoked on a null request / response.**
 
+
 ```php
 function getMaskedCard($card)
 {
@@ -145,6 +146,29 @@ $apiCallLogger->logRequest(
     array(
         $maskCard,
         $obfuscateCvv,
+    )
+);
+```
+
+
+### Aliasing Processors
+
+Generally processors are passed into the `logRequest` / `logResponse` calls however the `ApiCallLogger` implementation
+supports registering processor instances with an alias. This can be useful if you are re-using the same processors for
+multiple different api calls (quite common when masking passwords).
+
+```php
+$apiCallLogger->setAliasedProcessor('card.number', $maskCard);
+$apiCallLogger->setAliasedProcessor('card.cvv', $obfuscateCvv);
+
+$apiCallLogger->logRequest(
+    $request,
+    $endpoint,
+    $method,
+    $reference,
+    array(
+        'card.number',
+        'card.cvv',
     )
 );
 ```
