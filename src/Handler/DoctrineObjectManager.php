@@ -3,7 +3,7 @@
 namespace Assimtech\Dislog\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Assimtech\Dislog\ApiCallInterface;
+use Assimtech\Dislog\Model\ApiCallInterface;
 
 class DoctrineObjectManager implements HandlerInterface
 {

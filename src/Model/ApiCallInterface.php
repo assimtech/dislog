@@ -1,6 +1,6 @@
 <?php
 
-namespace Assimtech\Dislog;
+namespace Assimtech\Dislog\Model;
 
 interface ApiCallInterface
 {

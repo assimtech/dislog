@@ -2,6 +2,8 @@
 
 namespace Assimtech\Dislog;
 
+use Assimtech\Dislog\Model\ApiCallInterface;
+
 interface ApiCallLoggerInterface
 {
     /**

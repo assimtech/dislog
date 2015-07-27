@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Assimtech\Dislog;
+namespace spec\Assimtech\Dislog\Model;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -9,7 +9,7 @@ class ApiCallSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\ApiCall');
+        $this->shouldHaveType('Assimtech\Dislog\Model\ApiCall');
     }
 
     function it_has_id($id)

@@ -5,7 +5,7 @@ namespace spec\Assimtech\Dislog\Handler;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Doctrine\Common\Persistence\ObjectManager;
-use Assimtech\Dislog\ApiCallInterface;
+use Assimtech\Dislog\Model\ApiCallInterface;
 
 class DoctrineObjectManagerSpec extends ObjectBehavior
 {

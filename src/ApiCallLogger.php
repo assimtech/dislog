@@ -2,6 +2,7 @@
 
 namespace Assimtech\Dislog;
 
+use Assimtech\Dislog\Model\ApiCallInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Traversable;

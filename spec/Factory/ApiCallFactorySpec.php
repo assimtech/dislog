@@ -14,11 +14,11 @@ class ApiCallFactorySpec extends ObjectBehavior
 
     function it_can_create_an_api_call_interface()
     {
-        $this->create()->shouldBeAnInstanceOf('Assimtech\Dislog\ApiCallInterface');
+        $this->create()->shouldBeAnInstanceOf('Assimtech\Dislog\Model\ApiCallInterface');
     }
 
     function it_can_create_an_api_call()
     {
-        $this->create()->shouldReturnAnInstanceOf('Assimtech\Dislog\ApiCall');
+        $this->create()->shouldReturnAnInstanceOf('Assimtech\Dislog\Model\ApiCall');
     }
 }

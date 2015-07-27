@@ -2,7 +2,7 @@
 
 namespace Assimtech\Dislog\Factory;
 
-use Assimtech\Dislog\ApiCall;
+use Assimtech\Dislog\Model\ApiCall;
 
 class ApiCallFactory implements FactoryInterface
 {
