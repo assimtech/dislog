@@ -14,6 +14,7 @@ The `ApiCallLogger` may be used to record requests and responses to both client 
 ```php
 /**
  * @var Assimtech\Dislog\ApiCallLoggerInterface $apiCallLogger
+ * @var Assimtech\Dislog\Model\ApiCallInterface $apiCall
  */
 $apiCall = $apiCallLogger->logRequest($request, $endpoint, $method, $reference);
 
@@ -48,11 +49,19 @@ class Api
         $endpoint = 'http://my.endpoint';
         $reference = time();
 
-        $apiCall = $this->apiCallLogger->logRequest($request, $endpoint, __METHOD__, $reference);
+        $apiCall = $this->apiCallLogger->logRequest(
+            $request,
+            $endpoint,
+            __METHOD__,
+            $reference
+        );
 
         $response = $this->transmit($request);
 
-        $this->apiCallLogger->logResponse($apiCall, $response);
+        $this->apiCallLogger->logResponse(
+            $apiCall,
+            $response
+        );
     }
 }
 
@@ -93,7 +102,7 @@ This handler accepts any `Doctrine\Common\Persistence\ObjectManager`:
 * Doctrine\ODM\MongoDB\DocumentManager
 * Doctrine\ODM\CouchDB\DocumentManager
 
-**Note: You must setup any mapping to `Assimtech\Dislog\ApiCall` in your object manager**
+**Note: You must setup any mapping to an `Assimtech\Dislog\Model\ApiCallInterface` in your object manager**
 
 
 ```php
