@@ -112,8 +112,13 @@ class ApiCallLogger implements ApiCallLoggerInterface
      *
      * Processors are allowed to be an aliased string if setup previously using setAliasedProcessor
      */
-    public function logRequest($request, $endpoint, $method, $reference = null, $processors = array())
-    {
+    public function logRequest(
+        $request,
+        $endpoint,
+        $method,
+        $reference = null,
+        $processors = array()
+    ) {
         $processedRequest = $this->processPayload($processors, $request);
 
         $apiCall = $this->apiCallFactory->create();
@@ -135,8 +140,11 @@ class ApiCallLogger implements ApiCallLoggerInterface
      *
      * Processors are allowed to be an aliased string if setup previously using setAliasedProcessor
      */
-    public function logResponse(ApiCallInterface $apiCall, $response = null, $processors = array())
-    {
+    public function logResponse(
+        ApiCallInterface $apiCall,
+        $response = null,
+        $processors = array()
+    ) {
         $duration = microtime(true) - $apiCall->getRequestTime();
 
         $processedResponse = $this->processPayload($processors, $response);

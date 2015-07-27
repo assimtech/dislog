@@ -15,7 +15,13 @@ interface ApiCallLoggerInterface
      * @param callable|callable[] $processors
      * @return ApiCallInterface
      */
-    public function logRequest($request, $endpoint, $method, $reference = null, $processors = array());
+    public function logRequest(
+        $request,
+        $endpoint,
+        $method,
+        $reference = null,
+        $processors = array()
+    );
 
     /**
      * @api
@@ -24,5 +30,9 @@ interface ApiCallLoggerInterface
      * @param callable|callable[] $processors
      * @return void
      */
-    public function logResponse(ApiCallInterface $apiCall, $response = null, $processors = array());
+    public function logResponse(
+        ApiCallInterface $apiCall,
+        $response = null,
+        $processors = array()
+    );
 }
