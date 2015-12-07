@@ -129,7 +129,11 @@ class ApiCall implements ApiCallInterface
     public function setRequestTime($requestTime)
     {
         $this->requestTime = $requestTime;
-        $this->requestDateTime = DateTime::createFromFormat('U.u', $this->requestTime);
+
+        $micro = sprintf('%06d',($requestTime - floor($requestTime)) * 1000000);
+        $dateTimeStr = date('Y-m-d H:i:s', $requestTime);
+        $dateTimeStr .= '.' . $micro;
+        $this->requestDateTime = new DateTime($dateTimeStr);
 
         return $this;
     }
