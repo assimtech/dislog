@@ -11,9 +11,9 @@
     },
     "require-dev": {
         "doctrine/common": "^2",
-        "henrikbjorn/phpspec-code-coverage": "^3",
+        "leanphp/phpspec-code-coverage": "^4",
         "phpmd/phpmd": "^2",
-        "phpspec/phpspec": "^3",
+        "phpspec/phpspec": "^4",
         "psr/log": "^1",
         "sebastian/phpcpd": "^4",
         "squizlabs/php_codesniffer": "^3"
