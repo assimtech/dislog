@@ -130,7 +130,7 @@ class ApiCall implements ApiCallInterface
     {
         $this->requestTime = $requestTime;
 
-        $micro = sprintf('%06d',($requestTime - floor($requestTime)) * 1000000);
+        $micro = sprintf('%06d', ($requestTime - floor($requestTime)) * 1000000);
         $dateTimeStr = date('Y-m-d H:i:s', $requestTime);
         $dateTimeStr .= '.' . $micro;
         $this->requestDateTime = new DateTime($dateTimeStr);

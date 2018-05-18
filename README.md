@@ -112,6 +112,7 @@ This handler accepts any `Doctrine\Common\Persistence\ObjectManager`:
 * Doctrine\ODM\CouchDB\DocumentManager
 
 **Note: You must setup any mapping to an `Assimtech\Dislog\Model\ApiCallInterface` in your object manager**
+**WARNING: It is advisable to avoid using your application's default object manager as a `flush()` from dislog may interfere with your application**
 
 
 ```php
