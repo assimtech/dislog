@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Processor;
 
 /**
@@ -7,31 +9,24 @@ namespace Assimtech\Dislog\Processor;
  */
 class RegexReplace implements ProcessorInterface
 {
-    /**
-     * @var string $search
-     */
     protected $search;
-
-    /**
-     * @var string $replace
-     */
     protected $replace;
 
-    /**
-     * @param string $search
-     * @param string $replace
-     */
-    public function __construct($search, $replace)
-    {
+    public function __construct(
+        string $search,
+        string $replace
+    ) {
         $this->search = $search;
         $this->replace = $replace;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __invoke($payload)
-    {
+    public function __invoke(
+        ?string $payload
+    ): ?string {
+        if (null === $payload) {
+            return null;
+        }
+
         return preg_replace($this->search, $this->replace, $payload);
     }
 }

@@ -10,11 +10,9 @@
 
 Dislog is an API call logger. API calls differ from normal log events because they compose of a request and a response which happen at different times however should be logged together as they are related.
 
-
 ## Framework integration
 
 [Symfony 2 - DislogBundle](https://github.com/assimtech/dislog-bundle)
-
 
 ## Usage
 
@@ -31,7 +29,6 @@ $response = $api->transmit($request);
 
 $this->apiCallLogger->logResponse($apiCall, $response);
 ```
-
 
 Here's an example of dislog in a fake Api:
 
@@ -85,6 +82,11 @@ $api = new Api($apiCallLogger);
 $api->doSomething();
 ```
 
+Old logs can be cleaned up by calling remove on supporting handlers:
+
+```php
+$handler->remove(60 * 60 * 24 * 30); // keep 30 days worth of logs
+```
 
 ## Handlers
 
@@ -102,23 +104,27 @@ $stringSerializer = new Dislog\Serializer\StringSerializer();
 $streamHandler = new Dislog\Handler\Stream($stream, $uniqueIdentity, $stringSerializer);
 ```
 
+### DoctrineDocumentManager
 
-### DoctrineObjectManager
+This handler accepts a `Doctrine\ODM\MongoDB\DocumentManager`.
 
-This handler accepts any `Doctrine\Common\Persistence\ObjectManager`:
-
-* Doctrine\ORM\EntityManager
-* Doctrine\ODM\MongoDB\DocumentManager
-* Doctrine\ODM\CouchDB\DocumentManager
-
-**Note: You must setup any mapping to an `Assimtech\Dislog\Model\ApiCallInterface` in your object manager**
-**WARNING: It is advisable to avoid using your application's default object manager as a `flush()` from dislog may interfere with your application**
-
+**Note: You must setup any mapping to an `Assimtech\Dislog\Model\ApiCallInterface` in your document manager**
+**WARNING: It is advisable to avoid using your application's default document manager as a `flush()` from dislog may interfere with your application**
 
 ```php
-$doctrineHandler = new Dislog\Handler\DoctrineObjectManager($om);
+$documentHandler = new Dislog\Handler\DoctrineDocumentManager($documentManager);
 ```
 
+### DoctrineEntityManager
+
+This handler accepts a `Doctrine\ORM\EntityManagerInterface`.
+
+**Note: You must setup any mapping to an `Assimtech\Dislog\Model\ApiCallInterface` in your entity manager**
+**WARNING: It is advisable to avoid using your application's default entity manager as a `flush()` from dislog may interfere with your application**
+
+```php
+$entityHandler = new Dislog\Handler\DoctrineEntityManager($entityManager);
+```
 
 ## Processors
 
@@ -127,7 +133,6 @@ A processor is a callable which is executed on either the request or response pa
 Processors are passed along with the `logRequest` and / or `logResponse` calls to process the appropriate payload.
 
 **Note: Processors are not invoked on a null request / response.**
-
 
 ```php
 function getMaskedCard($card)
@@ -143,12 +148,12 @@ $method = 'processPayment';
 $reference = time();
 $card = '4444333322221111';
 $cvv = '123';
-$request = json_encode(array(
+$request = json_encode([
     'amount' => 12.95,
     'card' => $card,
     'expiry' => '2021-04',
     'cvv' => $cvv,
-));
+]);
 
 $maskCard = function ($request) use ($card) {
     $maskedCard = getMaskedCard($card);
@@ -162,36 +167,12 @@ $apiCallLogger->logRequest(
     $endpoint,
     $method,
     $reference,
-    array(
+    [
         $maskCard,
         $obfuscateCvv,
     )
 );
 ```
-
-
-### Aliasing Processors
-
-Generally processors are passed into the `logRequest` / `logResponse` calls however the `ApiCallLogger` implementation
-supports registering processor instances with an alias. This can be useful if you are re-using the same processors for
-multiple different api calls (quite common when masking passwords).
-
-```php
-$apiCallLogger->setAliasedProcessor('card.number', $maskCard);
-$apiCallLogger->setAliasedProcessor('card.cvv', $obfuscateCvv);
-
-$apiCallLogger->logRequest(
-    $request,
-    $endpoint,
-    $method,
-    $reference,
-    array(
-        'card.number',
-        'card.cvv',
-    )
-);
-```
-
 
 ### StringReplace
 
@@ -200,13 +181,13 @@ This processor is based on php's `str_replace`. It will replace a known string i
 ```php
 $maskedCard = getMaskedCard($card);
 $obfuscatedCvv = '***';
-$stringReplace = new Assimtech\Dislog\Processor\StringReplace(array(
+$stringReplace = new Assimtech\Dislog\Processor\StringReplace([
     $card,
     $cvv,
-), array(
+], [
     $maskedCard,
     $obfuscatedCvv,
-));
+]);
 $apiCallLogger->logRequest(
     $request,
     $endpoint,
@@ -232,7 +213,6 @@ $apiCallLogger->logResponse(
     $regexReplace
 );
 ```
-
 
 ## Serializers
 

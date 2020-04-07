@@ -4,45 +4,43 @@
     <target name="dev" depends="lint,cpd,cs,md,spec"/>
 
     <target name="lint">
-        <apply executable="php" failonerror="true">
-            <arg value="-l" />
-
+        <phplint
+            cachefile="php-lint.cache"
+            haltonfailure="true"
+            deprecatedAsError="true"
+        >
             <fileset dir="src">
-                <modified />
                 <include name="**/*.php" />
             </fileset>
-        </apply>
+        </phplint>
     </target>
 
     <target name="cpd">
-        <exec executable="vendor/bin/phpcpd" failonerror="true">
-            <arg path="src" />
-        </exec>
+        <exec
+            command="vendor/bin/phpcpd src"
+            checkreturn="true"
+        />
     </target>
 
     <target name="cs">
-        <exec executable="vendor/bin/phpcs" failonerror="true">
-            <arg value="-p" />
-            <arg value="--standard=phpcs.xml" />
-            <arg value="--extensions=php,inc" />
-            <arg path="." />
-        </exec>
+        <exec
+            command="vendor/bin/phpcs -p --standard=phpcs.xml --extensions=php src"
+            checkreturn="true"
+        />
     </target>
 
     <target name="md">
-        <exec executable="vendor/bin/phpmd">
-            <arg path="src" />
-            <arg value="text" />
-            <arg value="phpmd.xml" />
-        </exec>
+        <exec
+            command="vendor/bin/phpmd src text phpmd.xml"
+            checkreturn="true"
+        />
     </target>
 
     <target name="spec">
-        <exec executable="vendor/bin/phpspec" failonerror="true">
-            <arg value="run" />
-            <arg value="--no-interaction" />
-            <arg value="--stop-on-failure" />
-        </exec>
+        <exec
+            command="vendor/bin/phpspec run --no-interaction --stop-on-failure"
+            checkreturn="true"
+        />
     </target>
 
 </project>

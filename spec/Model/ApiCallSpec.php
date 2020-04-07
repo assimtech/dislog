@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog\Model;
 
+use Assimtech\Dislog\Model\ApiCall;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -9,56 +12,63 @@ class ApiCallSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\Model\ApiCall');
+        $this->shouldHaveType(ApiCall::class);
     }
 
-    function it_has_id($id)
+    function it_has_id()
     {
-        $this->setId($id)->shouldReturn($this);
-        $this->getId()->shouldReturn($id);
+        $string = __METHOD__;
+        $this->setId($string)->shouldReturn($this);
+        $this->getId()->shouldReturn($string);
     }
 
-    function it_has_endpoint($endpoint)
+    function it_has_endpoint()
     {
-        $this->setEndpoint($endpoint)->shouldReturn($this);
-        $this->getEndpoint()->shouldReturn($endpoint);
+        $string = __METHOD__;
+        $this->setEndpoint($string)->shouldReturn($this);
+        $this->getEndpoint()->shouldReturn($string);
     }
 
-    function it_has_method($method)
+    function it_has_method()
     {
-        $this->setMethod($method)->shouldReturn($this);
-        $this->getMethod()->shouldReturn($method);
+        $string = __METHOD__;
+        $this->setMethod($string)->shouldReturn($this);
+        $this->getMethod()->shouldReturn($string);
     }
 
-    function it_has_reference($reference)
+    function it_has_reference()
     {
-        $this->setReference($reference)->shouldReturn($this);
-        $this->getReference()->shouldReturn($reference);
+        $string = __METHOD__;
+        $this->setReference($string)->shouldReturn($this);
+        $this->getReference()->shouldReturn($string);
     }
 
     function it_has_request_time()
     {
-        $requestTime = 1.2;
-        $this->setRequestTime($requestTime)->shouldReturn($this);
-        $this->getRequestTime()->shouldReturn($requestTime);
-        $this->getRequestDateTime()->shouldReturnAnInstanceOf('DateTime');
+        $float = 1.2;
+        $this->setRequestTime($float)->shouldReturn($this);
+        $this->getRequestTime()->shouldReturn($float);
+        $this->getRequestDateTime()->shouldReturnAnInstanceOf(\DateTime::class);
     }
 
-    function it_has_duration($duration)
+    function it_has_duration()
     {
-        $this->setDuration($duration)->shouldReturn($this);
-        $this->getDuration()->shouldReturn($duration);
+        $float = 1.3;
+        $this->setDuration($float)->shouldReturn($this);
+        $this->getDuration()->shouldReturn($float);
     }
 
-    function it_has_request($request)
+    function it_has_request()
     {
-        $this->setRequest($request)->shouldReturn($this);
-        $this->getRequest()->shouldReturn($request);
+        $string = __METHOD__;
+        $this->setRequest($string)->shouldReturn($this);
+        $this->getRequest()->shouldReturn($string);
     }
 
-    function it_has_response($response)
+    function it_has_response()
     {
-        $this->setResponse($response)->shouldReturn($this);
-        $this->getResponse()->shouldReturn($response);
+        $string = __METHOD__;
+        $this->setResponse($string)->shouldReturn($this);
+        $this->getResponse()->shouldReturn($string);
     }
 }

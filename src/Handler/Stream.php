@@ -1,35 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Handler;
 
 use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
-use Assimtech\Dislog\Serializer\SerializerInterface;
 use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\Serializer\SerializerInterface;
 
 class Stream implements HandlerInterface
 {
-    /**
-     * @var resource $stream
-     */
     protected $stream;
-
-    /**
-     * @var IdentityGeneratorInterface $identityGenerator
-     */
     protected $identityGenerator;
-
-    /**
-     * @var SerializerInterface $serializer
-     */
     protected $serializer;
 
-    /**
-     * @param resource|string $stream
-     * @param IdentityGeneratorInterface $identityGenerator
-     * @param SerializerInterface $serializer
-     */
     public function __construct(
-        $stream,
+        /** resource|string */ $stream,
         IdentityGeneratorInterface $identityGenerator,
         SerializerInterface $serializer
     ) {
@@ -49,12 +35,10 @@ class Stream implements HandlerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(ApiCallInterface $apiCall)
-    {
-        if ($apiCall->getId() === null) {
+    public function handle(
+        ApiCallInterface $apiCall
+    ): void {
+        if (null === $apiCall->getId()) {
             $id = $this->identityGenerator->getIdentity();
             $apiCall->setId($id);
         }
@@ -62,5 +46,11 @@ class Stream implements HandlerInterface
         $serializedApiCall = call_user_func($this->serializer, $apiCall);
 
         fwrite($this->stream, $serializedApiCall);
+    }
+
+    public function remove(
+        int $maxAge
+    ): void {
+        throw new \BadMethodCallException(__METHOD__ . ' is not supported by ' . __CLASS__);
     }
 }

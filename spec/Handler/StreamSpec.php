@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog\Handler;
 
+use Assimtech\Dislog\Handler\Stream;
+use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
+use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\Serializer\SerializerInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Assimtech\Dislog\Identity\IdentityGeneratorInterface;
-use Assimtech\Dislog\Serializer\SerializerInterface;
-use Assimtech\Dislog\Model\ApiCallInterface;
 use RuntimeException;
 
 class StreamSpec extends ObjectBehavior
@@ -18,7 +21,7 @@ class StreamSpec extends ObjectBehavior
         $stream = 'php://temp';
         $this->beConstructedWith($stream, $identityGenerator, $serializer);
 
-        $this->shouldHaveType('Assimtech\Dislog\Handler\Stream');
+        $this->shouldHaveType(Stream::class);
     }
 
     function it_can_handle_new_apicall(

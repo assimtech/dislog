@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Processor;
 
 /**
@@ -9,7 +11,8 @@ interface ProcessorInterface
 {
     /**
      * @param string $payload either a request or response
-     * @return string
      */
-    public function __invoke($payload);
+    public function __invoke(
+        ?string $payload
+    ): ?string;
 }

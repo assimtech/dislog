@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog;
 
-use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
+use Assimtech\Dislog\ApiCallLogger;
 use Assimtech\Dislog\Factory\FactoryInterface;
 use Assimtech\Dislog\Handler\HandlerInterface;
-use Psr\Log\LoggerInterface;
 use Assimtech\Dislog\Model\ApiCallInterface;
 use Assimtech\Dislog\Processor\ProcessorInterface;
-use Exception;
+use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 
 class ApiCallLoggerSpec extends ObjectBehavior
 {
     function let(FactoryInterface $factory, HandlerInterface $handler, LoggerInterface $psrLogger)
     {
-        $options = array();
+        $options = [];
         $this->beConstructedWith($factory, $handler, $options, $psrLogger);
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\ApiCallLogger');
+        $this->shouldHaveType(ApiCallLogger::class);
     }
 
     function it_can_log_request(
@@ -84,7 +86,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setReference($reference)->willReturn($apiCall);
         $apiCall->setRequestTime(Argument::type('float'))->willReturn($apiCall);
 
-        $handler->handle($apiCall)->willThrow(new Exception('failed'));
+        $handler->handle($apiCall)->willThrow(new \Exception('failed'));
 
         $this->logRequest($request, $endpoint, $method, $reference)->shouldReturn($apiCall);
     }
@@ -109,7 +111,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setRequestTime(Argument::type('float'))->willReturn($apiCall);
 
         $exceptionMessage = 'failed';
-        $e = new Exception($exceptionMessage);
+        $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
         $apiCall->getEndpoint()->willReturn($endpoint);
@@ -118,14 +120,14 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->getRequest()->willReturn($request);
         $apiCall->getResponse()->willReturn(null);
 
-        $psrLogger->warning($exceptionMessage, array(
+        $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
             'endpoint' => $endpoint,
             'method' => $method,
             'reference' => $reference,
             'request' => $request,
             'response' => null,
-        ))->shouldBeCalled();
+        ])->shouldBeCalled();
 
         $this->logRequest($request, $endpoint, $method, $reference)->shouldReturn($apiCall);
     }
@@ -145,7 +147,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setResponse($response)->willReturn($apiCall);
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
-        $handler->handle($apiCall)->willThrow(new Exception('failed'));
+        $handler->handle($apiCall)->willThrow(new \Exception('failed'));
 
         $this->logResponse($apiCall, $response);
     }
@@ -169,7 +171,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
         $exceptionMessage = 'failed';
-        $e = new Exception($exceptionMessage);
+        $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
         $apiCall->getEndpoint()->willReturn($endpoint);
@@ -178,14 +180,14 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->getRequest()->willReturn($request);
         $apiCall->getResponse()->willReturn($response);
 
-        $psrLogger->warning($exceptionMessage, array(
+        $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
             'endpoint' => $endpoint,
             'method' => $method,
             'reference' => $reference,
             'request' => $request,
             'response' => $response,
-        ))->shouldBeCalled();
+        ])->shouldBeCalled();
 
         $this->logResponse($apiCall, $response);
     }
@@ -196,9 +198,9 @@ class ApiCallLoggerSpec extends ObjectBehavior
         ApiCallInterface $apiCall,
         LoggerInterface $psrLogger
     ) {
-        $options = array(
-            'suppressHandlerExceptions' => false,
-        );
+        $options = [
+            'suppress_handler_exceptions' => false,
+        ];
 
         $this->beConstructedWith($factory, $handler, $options, $psrLogger);
 
@@ -216,7 +218,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
         $exceptionMessage = 'failed';
-        $e = new Exception($exceptionMessage);
+        $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
         $apiCall->getEndpoint()->willReturn($endpoint);
@@ -225,21 +227,21 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $apiCall->getRequest()->willReturn($request);
         $apiCall->getResponse()->willReturn($response);
 
-        $psrLogger->warning($exceptionMessage, array(
+        $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
             'endpoint' => $endpoint,
             'method' => $method,
             'reference' => $reference,
             'request' => $request,
             'response' => $response,
-        ))->shouldBeCalled();
+        ])->shouldBeCalled();
 
         $this
             ->shouldThrow($e)
-            ->during('logResponse', array(
+            ->during('logResponse', [
                 $apiCall,
-                $response
-            ))
+                $response,
+            ])
         ;
     }
 
@@ -287,28 +289,6 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $handler->handle($apiCall)->shouldBeCalled();
 
         $this->logResponse($apiCall, $response, $processor);
-    }
-
-    function it_can_process_response_by_alias(
-        ApiCallInterface $apiCall,
-        HandlerInterface $handler,
-        ProcessorInterface $processor
-    ) {
-        $response = 'my response';
-        $processorAlias = 'my.processor';
-
-        $requestTime = 1.2;
-        $apiCall->getRequestTime()->willReturn($requestTime);
-
-        $processor->__invoke($response)->willReturn($response);
-        $this->setAliasedProcessor($processorAlias, $processor)->shouldReturn($this);
-
-        $apiCall->setResponse($response)->willReturn($apiCall);
-        $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
-
-        $handler->handle($apiCall)->shouldBeCalled();
-
-        $this->logResponse($apiCall, $response, $processorAlias);
     }
 
     function it_wont_process_null_response(

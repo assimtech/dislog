@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog\Processor;
 
+use Assimtech\Dislog\Processor\StringReplace;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -14,7 +17,7 @@ class StringReplaceSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\Processor\StringReplace');
+        $this->shouldHaveType(StringReplace::class);
     }
 
     function it_can_replace()

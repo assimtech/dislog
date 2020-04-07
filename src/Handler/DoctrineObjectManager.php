@@ -1,38 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Assimtech\Dislog\Model\ApiCallInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class DoctrineObjectManager implements HandlerInterface
 {
-    /**
-     * @var ObjectManager $objectManager
-     */
     protected $objectManager;
 
-    /**
-     * @param ObjectManager $objectManager
-     */
-    public function __construct(ObjectManager $objectManager)
-    {
+    public function __construct(
+        ObjectManager $objectManager
+    ) {
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(ApiCallInterface $apiCall)
-    {
-        if (!$this->objectManager->contains($apiCall)) {
-            if ($apiCall->getId() === null) {
-                $this->objectManager->persist($apiCall);
-            } else {
-                $this->objectManager->merge($apiCall);
-            }
-        }
-
+    public function handle(
+        ApiCallInterface $apiCall
+    ): void {
+        $this->objectManager->persist($apiCall);
         $this->objectManager->flush();
+    }
+
+    public function remove(
+        int $maxAge
+    ): void {
+        throw new \BadMethodCallException(__METHOD__ . ' is not supported by ' . __CLASS__);
     }
 }

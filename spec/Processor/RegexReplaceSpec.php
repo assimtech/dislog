@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog\Processor;
 
+use Assimtech\Dislog\Processor\RegexReplace;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -14,7 +17,7 @@ class RegexReplaceSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\Processor\RegexReplace');
+        $this->shouldHaveType(RegexReplace::class);
     }
 
     function it_can_replace()

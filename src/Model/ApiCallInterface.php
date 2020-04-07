@@ -1,99 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Model;
 
 interface ApiCallInterface
 {
     /**
      * @param integer|string $id
-     * @return self
      */
-    public function setId($id);
+    public function setId($id): self;
 
     /**
      * @return integer|string
      */
     public function getId();
 
-    /**
-     * @param string $endpoint
-     * @return self
-     */
-    public function setEndpoint($endpoint);
+    public function setEndpoint(
+        ?string $endpoint
+    ): self;
 
-    /**
-     * @return string
-     */
-    public function getEndpoint();
+    public function getEndpoint(): ?string;
 
-    /**
-     * @param string $method
-     * @return self
-     */
-    public function setMethod($method);
+    public function setMethod(
+        ?string $method
+    ): self;
 
-    /**
-     * @return string
-     */
-    public function getMethod();
+    public function getMethod(): ?string;
 
-    /**
-     * @param string|integer|null $reference
-     * @return self
-     */
-    public function setReference($reference);
+    public function setReference(
+        ?string $reference
+    ): self;
 
-    /**
-     * @return string|integer|null
-     */
-    public function getReference();
+    public function getReference(): ?string;
 
-    /**
-     * @param float $requestTime
-     * @return self
-     */
-    public function setRequestTime($requestTime);
+    public function setRequestTime(
+        float $requestTime
+    ): self;
 
-    /**
-     * @return float
-     */
-    public function getRequestTime();
+    public function getRequestTime(): ?float;
 
-    /**
-     * @return \DateTime
-     */
-    public function getRequestDateTime();
+    public function getRequestDateTime(): ?\DateTime;
 
-    /**
-     * @param float $duration
-     * @return self
-     */
-    public function setDuration($duration);
+    public function setDuration(
+        ?float $duration
+    ): self;
 
-    /**
-     * @return float|null
-     */
-    public function getDuration();
+    public function getDuration(): ?float;
 
-    /**
-     * @param string $request
-     * @return self
-     */
-    public function setRequest($request);
+    public function setRequest(
+        ?string $request
+    ): self;
 
-    /**
-     * @return string
-     */
-    public function getRequest();
+    public function getRequest(): ?string;
 
-    /**
-     * @param string $response
-     * @return self
-     */
-    public function setResponse($response);
+    public function setResponse(
+        ?string $response
+    ): self;
 
-    /**
-     * @return string|null
-     */
-    public function getResponse();
+    public function getResponse(): ?string;
 }

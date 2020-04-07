@@ -1,4 +1,4 @@
-/cache.properties
+/php-lint.cache
 /composer.lock
 /coverage/
 /phpspec.yml

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Identity;
 
 interface IdentityGeneratorInterface

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog;
 
 use Assimtech\Dislog\Model\ApiCallInterface;
@@ -8,31 +10,21 @@ interface ApiCallLoggerInterface
 {
     /**
      * @api
-     * @param string|null $request
-     * @param string $endpoint
-     * @param string $method
-     * @param string|null $reference
-     * @param callable|callable[] $processors
-     * @return ApiCallInterface
      */
     public function logRequest(
-        $request,
-        $endpoint,
-        $method,
-        $reference = null,
-        $processors = array()
-    );
+        ?string $request,
+        ?string $endpoint,
+        ?string $method,
+        string $reference = null,
+        /* callable[]|callable */ $processors = []
+    ): ApiCallInterface;
 
     /**
      * @api
-     * @param ApiCallInterface $apiCall
-     * @param string|null $response
-     * @param callable|callable[] $processors
-     * @return void
      */
     public function logResponse(
         ApiCallInterface $apiCall,
-        $response = null,
-        $processors = array()
-    );
+        string $response = null,
+        /* callable[]|callable */ $processors = []
+    ): void;
 }

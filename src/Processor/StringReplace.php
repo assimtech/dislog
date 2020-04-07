@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Processor;
 
 /**
@@ -7,31 +9,24 @@ namespace Assimtech\Dislog\Processor;
  */
 class StringReplace implements ProcessorInterface
 {
-    /**
-     * @var mixed $search
-     */
     protected $search;
-
-    /**
-     * @var mixed $replace
-     */
     protected $replace;
 
-    /**
-     * @param mixed $search
-     * @param mixed $replace
-     */
-    public function __construct($search, $replace)
-    {
+    public function __construct(
+        string $search,
+        string $replace
+    ) {
         $this->search = $search;
         $this->replace = $replace;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __invoke($payload)
-    {
+    public function __invoke(
+        ?string $payload
+    ): ?string {
+        if (null === $payload) {
+            return null;
+        }
+
         return str_replace($this->search, $this->replace, $payload);
     }
 }

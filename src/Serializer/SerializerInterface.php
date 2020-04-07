@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Serializer;
 
 use Assimtech\Dislog\Model\ApiCallInterface;
@@ -9,9 +11,7 @@ use Assimtech\Dislog\Model\ApiCallInterface;
  */
 interface SerializerInterface
 {
-    /**
-     * @param ApiCallInterface $apiCall
-     * @return mixed
-     */
-    public function __invoke(ApiCallInterface $apiCall);
+    public function __invoke(
+        ApiCallInterface $apiCall
+    );
 }

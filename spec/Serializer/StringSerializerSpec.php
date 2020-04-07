@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace spec\Assimtech\Dislog\Serializer;
 
+use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\Serializer\StringSerializer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Assimtech\Dislog\Model\ApiCallInterface;
-use DateTime;
 
 class StringSerializerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Assimtech\Dislog\Serializer\StringSerializer');
+        $this->shouldHaveType(StringSerializer::class);
     }
 
-    function it_can_serialize(ApiCallInterface $apiCall, DateTime $requestDateTime)
+    function it_can_serialize(ApiCallInterface $apiCall, \DateTime $requestDateTime)
     {
         $duration = 1.23;
         $request = '<request />';
@@ -37,11 +39,11 @@ class StringSerializerSpec extends ObjectBehavior
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getReference()->willReturn($reference);
 
-        $data = json_encode(array(
+        $data = json_encode([
            'duration' => $duration,
            'request' => $request,
            'response' => $response,
-        ));
+        ]);
         $expectedString = sprintf(
             '[%s] (%s) %s (%s) | %s - %s%s',
             $dateTimeFormatted,

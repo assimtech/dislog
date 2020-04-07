@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Factory;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog\Model;
 
 interface FactoryInterface
 {
-    /**
-     * @return ApiCallInterface
-     */
-    public function create();
+    public function create(): Model\ApiCallInterface;
 }

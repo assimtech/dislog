@@ -1,209 +1,139 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Assimtech\Dislog\Model;
 
 use DateTime;
 
 class ApiCall implements ApiCallInterface
 {
-    /**
-     * @var integer|string $id
-     */
     protected $id;
-
-    /**
-     * @var string $endpoint
-     */
     protected $endpoint;
-
-    /**
-     * @var string $method
-     */
     protected $method;
-
-    /**
-     * @var string|integer|null $reference
-     */
     protected $reference;
-
-    /**
-     * @var float $requestTime
-     */
     protected $requestTime;
-
-    /**
-     * @var \DateTime $requestDateTime
-     */
     protected $requestDateTime;
-
-    /**
-     * @var float|null $duration
-     */
     protected $duration;
-
-    /**
-     * @var string $request
-     */
     protected $request;
-
-    /**
-     * @var string|null $response
-     */
     protected $response;
 
     /**
-     * {@inheritdoc}
+     * @param integer|string $id
      */
-    public function setId($id)
-    {
+    public function setId(
+        $id
+    ): ApiCallInterface {
         $this->id = $id;
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return integer|string
      */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setEndpoint($endpoint)
-    {
+    public function setEndpoint(
+        ?string $endpoint
+    ): ApiCallInterface {
         $this->endpoint = $endpoint;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEndpoint()
+    public function getEndpoint(): ?string
     {
         return $this->endpoint;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMethod($method)
-    {
+    public function setMethod(
+        ?string $method
+    ): ApiCallInterface {
         $this->method = $method;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMethod()
+    public function getMethod(): ?string
     {
         return $this->method;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setReference($reference)
-    {
+    public function setReference(
+        ?string $reference
+    ): ApiCallInterface {
         $this->reference = $reference;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getReference()
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRequestTime($requestTime)
-    {
+    public function setRequestTime(
+        float $requestTime
+    ): ApiCallInterface {
         $this->requestTime = $requestTime;
 
         $micro = sprintf('%06d', ($requestTime - floor($requestTime)) * 1000000);
-        $dateTimeStr = date('Y-m-d H:i:s', $requestTime);
+        $dateTimeStr = date('Y-m-d H:i:s', (int) floor($requestTime));
         $dateTimeStr .= '.' . $micro;
         $this->requestDateTime = new DateTime($dateTimeStr);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequestTime()
+    public function getRequestTime(): ?float
     {
         return $this->requestTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequestDateTime()
+    public function getRequestDateTime(): ?\DateTime
     {
         return $this->requestDateTime;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDuration($duration)
-    {
+    public function setDuration(
+        ?float $duration
+    ): ApiCallInterface {
         $this->duration = $duration;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDuration()
+    public function getDuration(): ?float
     {
         return $this->duration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRequest($request)
-    {
+    public function setRequest(
+        ?string $request
+    ): ApiCallInterface {
         $this->request = $request;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequest()
+    public function getRequest(): ?string
     {
         return $this->request;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setResponse($response)
-    {
+    public function setResponse(
+        ?string $response
+    ): ApiCallInterface {
         $this->response = $response;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResponse()
+    public function getResponse(): ?string
     {
         return $this->response;
     }
