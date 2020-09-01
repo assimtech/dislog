@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Assimtech\Dislog\Handler;
 
 use Assimtech\Dislog\Model\ApiCallInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 
 class DoctrineObjectManager implements HandlerInterface
 {
     protected $objectManager;
 
+    /**
+     * @param \Doctrine\Common\Persistence\ObjectManager|\Doctrine\Persistence\ObjectManager $objectManager
+     */
     public function __construct(
-        ObjectManager $objectManager
+        $objectManager
     ) {
         $this->objectManager = $objectManager;
     }
