@@ -31,7 +31,7 @@ class DoctrineEntityManager extends DoctrineObjectManager
         WHERE ac.{$this->requestDateField} < :upto
         DQL;
         $query = $this->objectManager->createQuery($dql);
-        $query->setParameter('upto', new \DateTime($maxAge . ' seconds ago'));
+        $query->setParameter('upto', new \DateTimeImmutable($maxAge . ' seconds ago'));
         $query->execute();
     }
 }

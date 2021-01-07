@@ -48,7 +48,7 @@ class ApiCallSpec extends ObjectBehavior
         $float = 1.2;
         $this->setRequestTime($float)->shouldReturn($this);
         $this->getRequestTime()->shouldReturn($float);
-        $this->getRequestDateTime()->shouldReturnAnInstanceOf(\DateTime::class);
+        $this->getRequestDateTime()->shouldReturnAnInstanceOf(\DateTimeInterface::class);
     }
 
     function it_has_duration()

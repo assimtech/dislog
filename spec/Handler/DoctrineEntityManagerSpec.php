@@ -33,7 +33,7 @@ class DoctrineEntityManagerSpec extends ObjectBehavior
         WHERE ac.requestDateTime < :upto
         DQL;
         $entityManager->createQuery($expectedDql)->willReturn($query);
-        $query->setParameter('upto', Argument::type(\DateTime::class))->shouldBeCalled();
+        $query->setParameter('upto', Argument::type(\DateTimeInterface::class))->shouldBeCalled();
         $query->execute()->shouldBeCalled();
         $this->remove(__LINE__);
     }

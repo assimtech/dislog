@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Model;
 
-use DateTime;
-
 class ApiCall implements ApiCallInterface
 {
     protected $id;
@@ -84,7 +82,7 @@ class ApiCall implements ApiCallInterface
         $micro = sprintf('%06d', ($requestTime - floor($requestTime)) * 1000000);
         $dateTimeStr = date('Y-m-d H:i:s', (int) floor($requestTime));
         $dateTimeStr .= '.' . $micro;
-        $this->requestDateTime = new DateTime($dateTimeStr);
+        $this->requestDateTime = new \DateTimeImmutable($dateTimeStr);
 
         return $this;
     }
@@ -94,7 +92,7 @@ class ApiCall implements ApiCallInterface
         return $this->requestTime;
     }
 
-    public function getRequestDateTime(): ?\DateTime
+    public function getRequestDateTime(): ?\DateTimeInterface
     {
         return $this->requestDateTime;
     }

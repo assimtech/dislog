@@ -16,7 +16,7 @@ class StringSerializerSpec extends ObjectBehavior
         $this->shouldHaveType(StringSerializer::class);
     }
 
-    function it_can_serialize(ApiCallInterface $apiCall, \DateTime $requestDateTime)
+    function it_can_serialize(ApiCallInterface $apiCall, \DateTimeImmutable $requestDateTime)
     {
         $duration = 1.23;
         $request = '<request />';

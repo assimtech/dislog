@@ -12,13 +12,12 @@
     "require-dev": {
         "doctrine/common": "^2",
         "doctrine/orm": "^2",
-        "friends-of-phpspec/phpspec-code-coverage": "^4",
-        "phing/phing": "^2",
-        "phpmd/phpmd": "^2",
-        "phpspec/phpspec": "^6",
+        "phing/phing": "*",
+        "phpmd/phpmd": "*",
+        "phpspec/phpspec": "*",
         "psr/log": "^1",
-        "sebastian/phpcpd": "^4|^5",
-        "squizlabs/php_codesniffer": "^3"
+        "sebastian/phpcpd": "*",
+        "squizlabs/php_codesniffer": "*"
     },
     "autoload": {
         "psr-4": {

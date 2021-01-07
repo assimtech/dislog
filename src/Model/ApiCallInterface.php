@@ -40,7 +40,7 @@ interface ApiCallInterface
 
     public function getRequestTime(): ?float;
 
-    public function getRequestDateTime(): ?\DateTime;
+    public function getRequestDateTime(): ?\DateTimeInterface;
 
     public function setDuration(
         ?float $duration
