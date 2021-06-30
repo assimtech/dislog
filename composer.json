@@ -13,14 +13,19 @@
         "doctrine/common": "^2",
         "doctrine/orm": "^2",
         "guzzlehttp/psr7": "^1.7|^2",
+        "psr/http-client": "^1",
+        "psr/http-message": "^1",
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "phpspec/phpspec": "*",
-        "psr/http-client": "^1",
-        "psr/http-message": "^1",
         "psr/log": "^1",
         "sebastian/phpcpd": "*",
         "squizlabs/php_codesniffer": "*"
+    },
+    "suggest": {
+        "guzzlehttp/psr7": "Required if using LoggingHttpClient",
+        "psr/http-client": "Required if using LoggingHttpClient",
+        "psr/http-message": "Required if using LoggingHttpClient"
     },
     "autoload": {
         "psr-4": {

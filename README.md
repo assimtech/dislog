@@ -9,7 +9,7 @@ Dislog is an API call logger. API calls differ from normal log events because th
 
 ## Framework integration
 
-[Symfony ^3|^4|^5|^6 - DislogBundle](https://github.com/assimtech/dislog-bundle)
+[Symfony - DislogBundle](https://github.com/assimtech/dislog-bundle)
 
 ## Usage
 
