@@ -1,9 +1,0 @@
-build:
-  nodes:
-    analysis:
-      tests:
-        override:
-          - php-scrutinizer-run
-filter:
-    excluded_paths:
-        - 'spec/*'

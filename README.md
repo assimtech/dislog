@@ -4,17 +4,48 @@
 [![Total Downloads](https://poser.pugx.org/assimtech/dislog/downloads)](https://packagist.org/packages/assimtech/dislog)
 [![Latest Unstable Version](https://poser.pugx.org/assimtech/dislog/v/unstable)](https://packagist.org/packages/assimtech/dislog)
 [![License](https://poser.pugx.org/assimtech/dislog/license)](https://packagist.org/packages/assimtech/dislog)
-[![Build Status](https://travis-ci.org/assimtech/dislog.svg?branch=master)](https://travis-ci.org/assimtech/dislog)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/assimtech/dislog/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/assimtech/dislog/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/assimtech/dislog/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/assimtech/dislog/?branch=master)
 
 Dislog is an API call logger. API calls differ from normal log events because they compose of a request and a response which happen at different times however should be logged together as they are related.
 
 ## Framework integration
 
-[Symfony 2 - DislogBundle](https://github.com/assimtech/dislog-bundle)
+[Symfony ^3|^4|^5|^6 - DislogBundle](https://github.com/assimtech/dislog-bundle)
 
 ## Usage
+
+### LoggingHttpClientInterface
+
+A PSR-18 compatible `LoggingHttpClient` is provided if recording HTTP requests from a `Psr\Http\Client\ClientInterface`.
+
+Note: if using `Assimtech\Dislog\LoggingHttpClient` you **MUST** install the following dependancies into your project:
+
+- "guzzlehttp/psr7" This is only used to translate Psr\Http\Message\{RequestInterface,ResponseInterface} into strings
+- "psr/http-client"
+- "psr/http-message"
+
+```php
+/**
+ * @var Psr\Http\Client\ClientInterface $httpClient
+ * @var Assimtech\Dislog\ApiCallLoggerInterface $apiCallLogger
+ */
+$loggingHttpClient = new Assimtech\Dislog\LoggingHttpClient(
+    $httpClient,
+    $apiCallLogger
+);
+
+/**
+ * @var Psr\Http\Message\RequestInterface $request
+ * @var Psr\Http\Message\ResponseInterface $response
+ */
+$response = $loggingHttpClient->sendRequest(
+    $request,
+    /* ?string */ $appMethod,
+    /* ?string */ $reference,
+    /* callable[]|callable */ $processors
+);
+```
+
+### ApiCallLogger
 
 The `ApiCallLogger` may be used to record requests and responses to both client and server side apis. Request and response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.
 
@@ -23,7 +54,13 @@ The `ApiCallLogger` may be used to record requests and responses to both client 
  * @var Assimtech\Dislog\ApiCallLoggerInterface $apiCallLogger
  * @var Assimtech\Dislog\Model\ApiCallInterface $apiCall
  */
-$apiCall = $apiCallLogger->logRequest($request, $endpoint, $method, $reference);
+$apiCall = $apiCallLogger->logRequest(
+    /* ?string */ $request,
+    /* ?string */ $endpoint,
+    /* ?string */ $appMethod,
+    /* ?string */ $reference,
+    /* callable[]|callable */ $processors
+);
 
 $response = $api->transmit($request);
 
@@ -144,7 +181,7 @@ function getMaskedCard($card)
 }
 
 $endpoint = 'https://my.endpoint';
-$method = 'processPayment';
+$appMethod = 'processPayment';
 $reference = time();
 $card = '4444333322221111';
 $cvv = '123';
@@ -165,7 +202,7 @@ $obfuscateCvv = function ($request) use ($cvv) {
 $apiCallLogger->logRequest(
     $request,
     $endpoint,
-    $method,
+    $appMethod,
     $reference,
     [
         $maskCard,
@@ -191,7 +228,7 @@ $stringReplace = new Assimtech\Dislog\Processor\StringReplace([
 $apiCallLogger->logRequest(
     $request,
     $endpoint,
-    $method,
+    $appMethod,
     $reference,
     $stringReplace
 );

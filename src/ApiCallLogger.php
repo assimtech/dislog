@@ -21,7 +21,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
         Factory\FactoryInterface $apiCallFactory,
         Handler\HandlerInterface $handler,
         array $options = [],
-        LoggerInterface $psrLogger = null
+        ?LoggerInterface $psrLogger = null
     ) {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -62,8 +62,8 @@ class ApiCallLogger implements ApiCallLoggerInterface
     public function logRequest(
         ?string $request,
         ?string $endpoint,
-        ?string $method,
-        string $reference = null,
+        ?string $appMethod,
+        ?string $reference = null,
         /* callable[]|callable */ $processors = []
     ): ApiCallInterface {
         $processedRequest = $this->processPayload($processors, $request);
@@ -72,7 +72,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $apiCall
             ->setRequest($processedRequest)
             ->setEndpoint($endpoint)
-            ->setMethod($method)
+            ->setMethod($appMethod)
             ->setReference($reference)
             ->setRequestTime(microtime(true))
         ;
@@ -84,7 +84,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
 
     public function logResponse(
         ApiCallInterface $apiCall,
-        string $response = null,
+        ?string $response = null,
         /* callable[]|callable */ $processors = []
     ): void {
         $duration = microtime(true) - $apiCall->getRequestTime();

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Handler\DoctrineEntityManager;
-use Assimtech\Dislog\Model;
+use Assimtech\Dislog;
 use Doctrine\ORM;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -19,15 +18,15 @@ class DoctrineEntityManagerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DoctrineEntityManager::class);
+        $this->shouldHaveType(Dislog\Handler\DoctrineEntityManager::class);
     }
 
     function it_can_remove_objects(
         ORM\EntityManagerInterface $entityManager,
         ORM\AbstractQuery $query,
-        Model\ApiCallInterface $apiCall
+        Dislog\Model\ApiCallInterface $apiCall
     ) {
-        $entityClass = Model\ApiCall::class;
+        $entityClass = Dislog\Model\ApiCall::class;
         $expectedDql = <<<"DQL"
         DELETE FROM {$entityClass} ac
         WHERE ac.requestDateTime < :upto

@@ -5,16 +5,19 @@
     "homepage": "https://github.com/assimtech/dislog",
     "license": "MIT",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.2.5|^8",
 
         "symfony/options-resolver": "^3|^4|^5"
     },
     "require-dev": {
         "doctrine/common": "^2",
         "doctrine/orm": "^2",
+        "guzzlehttp/psr7": "^1.7|^2",
         "phing/phing": "*",
         "phpmd/phpmd": "*",
         "phpspec/phpspec": "*",
+        "psr/http-client": "^1",
+        "psr/http-message": "^1",
         "psr/log": "^1",
         "sebastian/phpcpd": "*",
         "squizlabs/php_codesniffer": "*"

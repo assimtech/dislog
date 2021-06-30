@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace spec\Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Handler\DoctrineObjectManager;
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog;
 use Doctrine\Persistence\ObjectManager;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -19,10 +18,10 @@ class DoctrineObjectManagerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DoctrineObjectManager::class);
+        $this->shouldHaveType(Dislog\Handler\DoctrineObjectManager::class);
     }
 
-    function it_can_handle_objects(ObjectManager $objectManager, ApiCallInterface $apiCall)
+    function it_can_handle_objects(ObjectManager $objectManager, Dislog\Model\ApiCallInterface $apiCall)
     {
         $objectManager->persist($apiCall)->shouldBeCalled();
         $objectManager->flush()->shouldBeCalled();
