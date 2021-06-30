@@ -27,7 +27,8 @@ class LoggingHttpClient implements LoggingHttpClientInterface
         Http\Message\RequestInterface $request,
         ?string $appMethod = null,
         ?string $reference = null,
-        /* callable[]|callable */ $processors = []
+        /* callable[]|callable */ $requestProcessors = [],
+        /* callable[]|callable */ $responseProcessors = []
     ): Http\Message\ResponseInterface {
         $loggedApiCall = (null !== $appMethod)
             ? $this->apiCallLogger->logRequest(
@@ -35,14 +36,18 @@ class LoggingHttpClient implements LoggingHttpClientInterface
                 (string) $request->getUri(),
                 $appMethod,
                 $reference,
-                $processors
+                $requestProcessors
             )
             : null
         ;
 
         $response = $this->httpClient->sendRequest($request);
         if (null !== $loggedApiCall) {
-            $this->apiCallLogger->logResponse($loggedApiCall, GuzzlePsr7\Message::toString($response));
+            $this->apiCallLogger->logResponse(
+                $loggedApiCall,
+                GuzzlePsr7\Message::toString($response),
+                $responseProcessors
+            );
         }
 
         return $response;

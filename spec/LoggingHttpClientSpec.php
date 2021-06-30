@@ -38,7 +38,12 @@ class LoggingHttpClientSpec extends ObjectBehavior
         $endpoint = '/my-endpoint';
         $appMethod = 'my method';
         $reference = 'my reference';
-        $processors = [];
+        $requestProcessors = [
+            'trim',
+        ];
+        $responseProcessors = [
+            'strtolower',
+        ];
 
         $uri->__toString()->willReturn($endpoint);
         $uri->getHost()->willReturn('host.test');
@@ -56,7 +61,7 @@ class LoggingHttpClientSpec extends ObjectBehavior
             $endpoint,
             $appMethod,
             $reference,
-            $processors
+            $requestProcessors
         )
             ->shouldBeCalled()
             ->willReturn($apiCall)
@@ -64,8 +69,11 @@ class LoggingHttpClientSpec extends ObjectBehavior
 
         $apiCallLogger->logResponse(
             $apiCall,
-            Argument::type('string')
-        )->shouldBeCalled();
+            Argument::type('string'),
+            $responseProcessors
+        )
+            ->shouldBeCalled()
+        ;
 
         $httpClient->sendRequest($request)->willReturn($response);
 
@@ -75,7 +83,13 @@ class LoggingHttpClientSpec extends ObjectBehavior
         $response->getHeaders()->willReturn([]);
         $response->getBody()->willReturn('');
 
-        $this->sendRequest($request, $appMethod, $reference, $processors)->shouldReturn($response);
+        $this->sendRequest(
+            $request,
+            $appMethod,
+            $reference,
+            $requestProcessors,
+            $responseProcessors
+        )->shouldReturn($response);
     }
 
     function it_can_send_without_logging(
@@ -86,7 +100,10 @@ class LoggingHttpClientSpec extends ObjectBehavior
     ) {
         $this->beConstructedWith($httpClient, $apiCallLogger);
 
-        $httpClient->sendRequest($request)->willReturn($response);
+        $httpClient->sendRequest($request)
+            ->shouldBeCalled()
+            ->willReturn($response)
+        ;
 
         $this->sendRequest($request)->shouldReturn($response);
     }
