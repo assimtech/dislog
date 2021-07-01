@@ -35,7 +35,7 @@ interface ApiCallInterface
     public function getReference(): ?string;
 
     public function setRequestTime(
-        float $requestTime
+        ?float $requestTime
     ): self;
 
     public function getRequestTime(): ?float;

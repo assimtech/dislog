@@ -6,15 +6,15 @@ namespace Assimtech\Dislog\Model;
 
 class ApiCall implements ApiCallInterface
 {
-    protected $id;
-    protected $endpoint;
-    protected $method;
-    protected $reference;
-    protected $requestTime;
-    protected $requestDateTime;
-    protected $duration;
-    protected $request;
-    protected $response;
+    protected $id = null;
+    protected ?string $endpoint = null;
+    protected ?string $method = null;
+    protected ?string $reference = null;
+    protected ?float $requestTime = null;
+    protected ?\DateTimeInterface $requestDateTime = null;
+    protected ?float $duration = null;
+    protected ?string $request = null;
+    protected ?string $response = null;
 
     /**
      * @param integer|string $id
@@ -75,12 +75,16 @@ class ApiCall implements ApiCallInterface
     }
 
     public function setRequestTime(
-        float $requestTime
+        ?float $requestTime
     ): ApiCallInterface {
         $this->requestTime = $requestTime;
+        if (null === $requestTime) {
+            $this->requestDateTime = null;
+            return $this;
+        }
 
-        $micro = sprintf('%06d', ($requestTime - floor($requestTime)) * 1000000);
-        $dateTimeStr = date('Y-m-d H:i:s', (int) floor($requestTime));
+        $micro = \sprintf('%06d', ($requestTime - \floor($requestTime)) * 1000000);
+        $dateTimeStr = \date('Y-m-d H:i:s', (int) \floor($requestTime));
         $dateTimeStr .= '.' . $micro;
         $this->requestDateTime = new \DateTimeImmutable($dateTimeStr);
 

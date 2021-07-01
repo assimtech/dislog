@@ -10,13 +10,16 @@ interface ApiCallLoggerInterface
 {
     /**
      * @api
+     *
+     * @param ?float $requestTime if null, $requestTime will be determined by ApiCallLogger
      */
     public function logRequest(
         ?string $request,
         ?string $endpoint,
         ?string $appMethod,
         ?string $reference = null,
-        /* callable[]|callable */ $processors = []
+        /* callable[]|callable|null */ $processors = null,
+        ?float $requestTime = null
     ): ApiCallInterface;
 
     /**
@@ -25,6 +28,6 @@ interface ApiCallLoggerInterface
     public function logResponse(
         ApiCallInterface $apiCall,
         ?string $response = null,
-        /* callable[]|callable */ $processors = []
+        /* callable[]|callable|null */ $processors = null
     ): void;
 }

@@ -7,8 +7,6 @@ namespace Assimtech\Dislog;
 use Assimtech\Dislog\Model\ApiCallInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Traversable;
-use Exception;
 
 class ApiCallLogger implements ApiCallLoggerInterface
 {
@@ -39,24 +37,25 @@ class ApiCallLogger implements ApiCallLoggerInterface
     }
 
     protected function processPayload(
-        /* callable[]|callable */ $processors,
+        /* callable[]|callable|null */ $processors,
         ?string $payload
     ): ?string {
         if ($payload === null) {
             return $payload;
         }
 
-        $strPayload = (string)$payload;
-
-        if (!is_array($processors) && !$processors instanceof Traversable) {
+        if (null === $processors) {
+            $processors = [];
+        }
+        if (!\is_array($processors) && !$processors instanceof \Traversable) {
             $processors = [ $processors ];
         }
 
         foreach ($processors as $processor) {
-            $strPayload = call_user_func($processor, $strPayload);
+            $payload = \call_user_func($processor, $payload);
         }
 
-        return $strPayload;
+        return $payload;
     }
 
     public function logRequest(
@@ -64,7 +63,8 @@ class ApiCallLogger implements ApiCallLoggerInterface
         ?string $endpoint,
         ?string $appMethod,
         ?string $reference = null,
-        /* callable[]|callable */ $processors = []
+        /* callable[]|callable|null */ $processors = null,
+        ?float $requestTime = null
     ): ApiCallInterface {
         $processedRequest = $this->processPayload($processors, $request);
 
@@ -74,7 +74,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
             ->setEndpoint($endpoint)
             ->setMethod($appMethod)
             ->setReference($reference)
-            ->setRequestTime(microtime(true))
+            ->setRequestTime($requestTime ?? \microtime(true))
         ;
 
         $this->handleApiCall($apiCall);
@@ -85,9 +85,9 @@ class ApiCallLogger implements ApiCallLoggerInterface
     public function logResponse(
         ApiCallInterface $apiCall,
         ?string $response = null,
-        /* callable[]|callable */ $processors = []
+        /* callable[]|callable|null */ $processors = null
     ): void {
-        $duration = microtime(true) - $apiCall->getRequestTime();
+        $duration = \microtime(true) - $apiCall->getRequestTime();
 
         $processedResponse = $this->processPayload($processors, $response);
 
@@ -104,26 +104,27 @@ class ApiCallLogger implements ApiCallLoggerInterface
     ): void {
         try {
             $this->handler->handle($apiCall);
-        } catch (Exception $exception) {
+        } catch (\Throwable $throwable) {
             // Log handler failures to a Psr-3 Logger if we have one
-            $this->logHandlerException($exception, $apiCall);
+            $this->logHandlerThrowable($throwable, $apiCall);
 
             if (!$this->options['suppress_handler_exceptions']) {
-                throw $exception;
+                throw $throwable;
             }
         }
     }
 
-    protected function logHandlerException(
-        Exception $exception,
+    protected function logHandlerThrowable(
+        \Throwable $throwable,
         ApiCallInterface $apiCall
     ): void {
         if ($this->psrLogger === null) {
             return;
         }
 
-        $this->psrLogger->warning($exception->getMessage(), [
-            'exception' => $exception,
+        $this->psrLogger->warning($throwable->getMessage(), [
+            'exception' => $throwable,
+            'api_call' => $apiCall->getId(),
             'endpoint' => $apiCall->getEndpoint(),
             'method' => $apiCall->getMethod(),
             'reference' => $apiCall->getReference(),

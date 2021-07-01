@@ -36,13 +36,40 @@ $loggingHttpClient = new Assimtech\Dislog\LoggingHttpClient(
 /**
  * @var Psr\Http\Message\RequestInterface $request
  * @var Psr\Http\Message\ResponseInterface $response
+ * @var ?string $appMethod The method in the application that triggered this API call, setting to null will disable API logging
+ * @var ?string $reference The reference for this specific call (e.g. id or key if available), helps with searching API logs
+ * @var callable[]|callable|null $requestProcessors Processors to apply to $request, see Processors section below
+ * @var callable[]|callable|null $responseProcessors Processors to apply to $response, see Processors section below
+ * @var bool $deferredLogging If set to true, API calls will only be logged if LoggingHttpClient::logLastApiCall() is called after the request is sent
+ *
+ * Deferred Logging is useful if you want to inspect the $response before deciding to log the API call or not:
  */
 $response = $loggingHttpClient->sendRequest(
     $request,
-    /* ?string */ $appMethod,
-    /* ?string */ $reference,
-    /* callable[]|callable */ $processors
+    /* ?string */ $appMethod = null,
+    /* ?string */ $reference = null,
+    /* callable[]|callable|null */ $requestProcessors = null,
+    /* callable[]|callable|null */ $responseProcessors = null,
+    /* bool */ $deferredLogging = false
 );
+```
+
+#### Deferred Logging
+
+If you only want to log based on certain responses you can use `$deferredLogging`:
+
+```php
+$response = $loggingHttpClient->sendRequest(
+    $request,
+    $appMethod,
+    $reference,
+    $requestProcessors,
+    $responseProcessors,
+    true // $deferredLogging - Logging will not happen unless LoggingHttpClient::logLastApiCall() is called
+);
+if (200 !== $response->getStatusCode()) {
+    $loggingHttpClient->logLastApiCall();
+}
 ```
 
 ### ApiCallLogger
@@ -59,7 +86,7 @@ $apiCall = $apiCallLogger->logRequest(
     /* ?string */ $endpoint,
     /* ?string */ $appMethod,
     /* ?string */ $reference,
-    /* callable[]|callable */ $processors
+    /* callable[]|callable|null */ $processors
 );
 
 $response = $api->transmit($request);

@@ -96,6 +96,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         Dislog\Model\ApiCallInterface $apiCall,
         LoggerInterface $psrLogger
     ) {
+        $apiCallId = 'my id';
         $request = 'my request';
         $endpoint = 'my endpoint';
         $appMethod = 'my method';
@@ -113,6 +114,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
+        $apiCall->getId()->willReturn($apiCallId);
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getMethod()->willReturn($appMethod);
         $apiCall->getReference()->willReturn($reference);
@@ -121,6 +123,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
+            'api_call' => $apiCallId,
             'endpoint' => $endpoint,
             'method' => $appMethod,
             'reference' => $reference,
@@ -156,6 +159,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         Dislog\Model\ApiCallInterface $apiCall,
         LoggerInterface $psrLogger
     ) {
+        $apiCallId = 'my id';
         $request = 'my request';
         $endpoint = 'my endpoint';
         $appMethod = 'my method';
@@ -173,6 +177,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
+        $apiCall->getId()->willReturn($apiCallId);
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getMethod()->willReturn($appMethod);
         $apiCall->getReference()->willReturn($reference);
@@ -181,6 +186,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
+            'api_call' => $apiCallId,
             'endpoint' => $endpoint,
             'method' => $appMethod,
             'reference' => $reference,
@@ -203,6 +209,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $this->beConstructedWith($factory, $handler, $options, $psrLogger);
 
+        $apiCallId = 'my id';
         $request = 'my request';
         $endpoint = 'my endpoint';
         $appMethod = 'my method';
@@ -220,6 +227,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $e = new \Exception($exceptionMessage);
         $handler->handle($apiCall)->willThrow($e);
 
+        $apiCall->getId()->willReturn($apiCallId);
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getMethod()->willReturn($appMethod);
         $apiCall->getReference()->willReturn($reference);
@@ -228,6 +236,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $psrLogger->warning($exceptionMessage, [
             'exception' => $e,
+            'api_call' => $apiCallId,
             'endpoint' => $endpoint,
             'method' => $appMethod,
             'reference' => $reference,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="assimtech/dislog" default="dev">
 
-    <target name="dev" depends="lint,cpd,cs,md,spec"/>
+    <target name="dev" depends="lint,cpd,cs,spec"/>
 
     <target name="lint">
         <phplint
@@ -25,13 +25,6 @@
     <target name="cs">
         <exec
             command="vendor/bin/phpcs -p --standard=phpcs.xml --extensions=php src"
-            checkreturn="true"
-        />
-    </target>
-
-    <target name="md">
-        <exec
-            command="vendor/bin/phpmd src text phpmd.xml"
             checkreturn="true"
         />
     </target>

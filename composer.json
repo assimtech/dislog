@@ -16,7 +16,6 @@
         "psr/http-client": "^1",
         "psr/http-message": "^1",
         "phing/phing": "*",
-        "phpmd/phpmd": "*",
         "phpspec/phpspec": "*",
         "psr/log": "^1",
         "sebastian/phpcpd": "*",
