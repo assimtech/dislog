@@ -34,23 +34,15 @@ $loggingHttpClient = new Assimtech\Dislog\LoggingHttpClient(
 );
 
 /**
- * @var Psr\Http\Message\RequestInterface $request
  * @var Psr\Http\Message\ResponseInterface $response
- * @var ?string $appMethod The method in the application that triggered this API call, setting to null will disable API logging
- * @var ?string $reference The reference for this specific call (e.g. id or key if available), helps with searching API logs
- * @var callable[]|callable|null $requestProcessors Processors to apply to $request, see Processors section below
- * @var callable[]|callable|null $responseProcessors Processors to apply to $response, see Processors section below
- * @var bool $deferredLogging If set to true, API calls will only be logged if LoggingHttpClient::logLastApiCall() is called after the request is sent
- *
- * Deferred Logging is useful if you want to inspect the $response before deciding to log the API call or not:
  */
 $response = $loggingHttpClient->sendRequest(
-    $request,
-    /* ?string */ $appMethod = null,
-    /* ?string */ $reference = null,
-    /* callable[]|callable|null */ $requestProcessors = null,
-    /* callable[]|callable|null */ $responseProcessors = null,
-    /* bool */ $deferredLogging = false
+    /* Psr\Http\Message\RequestInterface */ $request,
+    /* ?string */ $appMethod = null, // The method in the application that triggered this API call, setting to null will disable API logging
+    /* ?string */ $reference = null, // The reference for this specific call (e.g. id or key if available), helps with searching API logs
+    /* callable[]|callable|null */ $requestProcessors = null, // Processors to apply to $request, see Processors section below
+    /* callable[]|callable|null */ $responseProcessors = null, // Processors to apply to $response, see Processors section below
+    /* bool */ $deferredLogging = false // If set to true, API calls will only be logged if LoggingHttpClient::logLastApiCall() is called after the request is sent
 );
 ```
 
