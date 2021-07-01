@@ -26,6 +26,8 @@ interface LoggingHttpClientInterface
 
     /**
      * @api
+     *
+     * @param ?string $appMethod Application method, if null; disable ApiCall logging
      */
     public function sendRequest(
         Http\Message\RequestInterface $request,

@@ -73,7 +73,7 @@ class LoggingHttpClient implements LoggingHttpClientInterface
 
     private function logRequest(
         Http\Message\RequestInterface $request,
-        string $appMethod,
+        ?string $appMethod,
         ?string $reference = null,
         /* callable[]|callable|null */ $requestProcessors = null,
         ?float $requestTime = null
@@ -109,9 +109,6 @@ class LoggingHttpClient implements LoggingHttpClientInterface
      */
     public function logLastApiCall(): ?string
     {
-        if (null === $this->lastAppMethod) {
-            return null;
-        }
         $loggedApiCall = $this->logRequest(
             $this->lastRequest,
             $this->lastAppMethod,
@@ -151,23 +148,25 @@ class LoggingHttpClient implements LoggingHttpClientInterface
             ->resetLastApiCallId()
             ->resetDeferredApiCall()
         ;
-        $loggedApiCall = null;
 
-        if ($deferredLogging) {
-            $this->setDeferredRequest(
-                $request,
-                $appMethod,
-                $reference,
-                $requestProcessors,
-                $responseProcessors
-            );
-        } elseif (null !== $appMethod) {
-            $loggedApiCall = $this->logRequest(
-                $request,
-                $appMethod,
-                $reference,
-                $requestProcessors
-            );
+        $loggedApiCall = null;
+        if (null !== $appMethod) {
+            if ($deferredLogging) {
+                $this->setDeferredRequest(
+                    $request,
+                    $appMethod,
+                    $reference,
+                    $requestProcessors,
+                    $responseProcessors
+                );
+            } else {
+                $loggedApiCall = $this->logRequest(
+                    $request,
+                    $appMethod,
+                    $reference,
+                    $requestProcessors
+                );
+            }
         }
 
         $response = $this->httpClient->sendRequest($request);
