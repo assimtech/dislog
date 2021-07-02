@@ -109,6 +109,11 @@ class LoggingHttpClient implements LoggingHttpClientInterface
      */
     public function logLastApiCall(): ?string
     {
+        if (null === $this->lastRequestTime) {
+            // Logging was disabled, just proxy to getLastApiCallId for ease of use
+            return $this->getLastApiCallId();
+        }
+
         $loggedApiCall = $this->logRequest(
             $this->lastRequest,
             $this->lastAppMethod,
