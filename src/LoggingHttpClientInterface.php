@@ -18,9 +18,11 @@ interface LoggingHttpClientInterface
     /**
      * @api
      *
-     * If sendRequest was called with $deferredLogging = true, this will cause the last ApiCall to be logged
+     * Logs the last ApiCall when self::sendRequest was used with $deferredLogging = true
      *
-     * @return ?string lastApiCallId
+     * Returns the LastApiCallId (even if self::sendRequest was used with $deferredLogging = false)
+     *
+     * @return ?string Last ApiCall Id
      */
     public function logLastApiCall(): ?string;
 
