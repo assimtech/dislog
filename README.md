@@ -19,9 +19,9 @@ A PSR-18 compatible `LoggingHttpClient` is provided if recording HTTP requests f
 
 Note: if using `Assimtech\Dislog\LoggingHttpClient` you **MUST** install the following dependancies into your project:
 
-- "guzzlehttp/psr7" This is only used to translate Psr\Http\Message\{RequestInterface,ResponseInterface} into strings
-- "psr/http-client"
-- "psr/http-message"
+- `guzzlehttp/psr7` This is only used to translate Psr\Http\Message\{RequestInterface,ResponseInterface} into strings
+- `psr/http-client`
+- `psr/http-message`
 
 ```php
 /**
