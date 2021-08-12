@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Serializer;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog;
 
 class StringSerializer implements SerializerInterface
 {
@@ -17,15 +17,15 @@ class StringSerializer implements SerializerInterface
     }
 
     public function __invoke(
-        ApiCallInterface $apiCall
+        Dislog\Model\ApiCallInterface $apiCall
     ): string {
-        $data = json_encode([
+        $data = \json_encode([
            'duration' => $apiCall->getDuration(),
            'request' => $apiCall->getRequest(),
            'response' => $apiCall->getResponse(),
         ]);
 
-        return sprintf(
+        return \sprintf(
             '[%s] (%s) %s (%s) | %s - %s%s',
             $apiCall->getRequestDateTime()->format('c'),
             $apiCall->getId(),
