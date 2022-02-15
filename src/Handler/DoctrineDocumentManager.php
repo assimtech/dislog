@@ -33,21 +33,6 @@ class DoctrineDocumentManager extends DoctrineObjectManager
             'expireAfterSeconds' => $maxAge,
         ];
         $collection = $this->objectManager->getDocumentCollection($this->documentClass);
-        if ($collection->isFieldIndexed($this->requestDateField)) {
-            $existingIndexs = $collection->getIndexInfo();
-            foreach ($existingIndexs as $existingIndex) {
-                if ($keys !== $existingIndex['key']) {
-                    continue;
-                }
-                if (isset($existingIndex['expireAfterSeconds']) && $maxAge === $existingIndex['expireAfterSeconds']) {
-                    // Index exists and is correct
-                    return;
-                }
-                // Index exists but is incorrect, re-create it
-                $collection->deleteIndex($keys);
-                break;
-            }
-        }
-        $collection->ensureIndex($keys, $options);
+        $collection->createIndex($keys, $options);
     }
 }
