@@ -32,7 +32,19 @@ class DoctrineDocumentManager extends DoctrineObjectManager
         $options = [
             'expireAfterSeconds' => $maxAge,
         ];
+        /**
+         * @var \MongoDB\Collection $collection
+         */
         $collection = $this->objectManager->getDocumentCollection($this->documentClass);
-        $collection->createIndex($keys, $options);
+        try {
+            $collection->createIndex($keys, $options);
+        } catch (\MongoDB\Driver\Exception\CommandException $e) {
+            if ($e->getCode() !== 85) {
+                throw $e;
+            }
+            // Try to re-create
+            $collection->dropIndex("{$this->requestDateField}_1");
+            $collection->createIndex($keys, $options);
+        }
     }
 }
