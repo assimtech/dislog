@@ -57,6 +57,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
 
+        $apiCall->getEndpoint()->willReturn(null);
+        $apiCall->getMethod()->willReturn(null);
+        $apiCall->getReference()->willReturn(null);
+
         $apiCall->setResponse($response)->willReturn($apiCall);
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
 
@@ -145,6 +149,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $apiCall->getEndpoint()->willReturn(null);
+        $apiCall->getMethod()->willReturn(null);
+        $apiCall->getReference()->willReturn(null);
 
         $apiCall->setResponse($response)->willReturn($apiCall);
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
@@ -289,6 +297,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
 
+        $apiCall->getEndpoint()->willReturn(null);
+        $apiCall->getMethod()->willReturn(null);
+        $apiCall->getReference()->willReturn(null);
+
         $processor->__invoke($response)->willReturn($response);
 
         $apiCall->setResponse($response)->willReturn($apiCall);
@@ -308,6 +320,10 @@ class ApiCallLoggerSpec extends ObjectBehavior
 
         $requestTime = 1.2;
         $apiCall->getRequestTime()->willReturn($requestTime);
+
+        $apiCall->getEndpoint()->willReturn(null);
+        $apiCall->getMethod()->willReturn(null);
+        $apiCall->getReference()->willReturn(null);
 
         $apiCall->setResponse($response)->willReturn($apiCall);
         $apiCall->setDuration(Argument::type('float'))->willReturn($apiCall);
