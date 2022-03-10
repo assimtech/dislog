@@ -86,12 +86,27 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $processedRequest = $this->processPayload($processors, $request);
 
         if (null !== $endpoint && null !== $this->options['endpoint_max_length']) {
+            if ($this->options['endpoint_max_length'] < 1) {
+                throw new \InvalidArgumentException(
+                    "endpoint_max_length must be greater than 1, {$this->options['endpoint_max_length']} given"
+                );
+            }
             $endpoint = \substr($endpoint, 0, $this->options['endpoint_max_length']);
         }
         if (null !== $method && null !== $this->options['method_max_length']) {
+            if ($this->options['method_max_length'] < 1) {
+                throw new \InvalidArgumentException(
+                    "method_max_length must be greater than 1, {$this->options['method_max_length']} given"
+                );
+            }
             $method = \substr($method, 0, $this->options['method_max_length']);
         }
         if (null !== $reference && null !== $this->options['reference_max_length']) {
+            if ($this->options['reference_max_length'] < 1) {
+                throw new \InvalidArgumentException(
+                    "reference_max_length must be greater than 1, {$this->options['reference_max_length']} given"
+                );
+            }
             $reference = \substr($reference, 0, $this->options['reference_max_length']);
         }
 
