@@ -21,14 +21,31 @@ class ApiCallLogger implements ApiCallLoggerInterface
         array $options = [],
         ?LoggerInterface $psrLogger = null
     ) {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'suppress_handler_exceptions' => true,
-        ]);
-        $resolver->setAllowedValues('suppress_handler_exceptions', [
-            true,
-            false,
-        ]);
+        $resolver = (new OptionsResolver())
+            ->setDefaults([
+                'suppress_handler_exceptions' => true,
+                'endpoint_max_length' => null,
+                'method_max_length' => null,
+                'reference_max_length' => null,
+            ])
+            ->setAllowedValues('suppress_handler_exceptions', [
+                true,
+                false,
+            ])
+            ->setAllowedTypes('suppress_handler_exceptions', 'bool')
+            ->setAllowedTypes('endpoint_max_length', [
+                'null',
+                'int',
+            ])
+            ->setAllowedTypes('method_max_length', [
+                'null',
+                'int',
+            ])
+            ->setAllowedTypes('reference_max_length', [
+                'null',
+                'int',
+            ])
+        ;
 
         $this->apiCallFactory = $apiCallFactory;
         $this->handler = $handler;
@@ -61,18 +78,28 @@ class ApiCallLogger implements ApiCallLoggerInterface
     public function logRequest(
         ?string $request,
         ?string $endpoint,
-        ?string $appMethod,
+        ?string $method,
         ?string $reference = null,
         /* callable[]|callable|null */ $processors = null,
         ?float $requestTime = null
     ): ApiCallInterface {
         $processedRequest = $this->processPayload($processors, $request);
 
+        if (null !== $endpoint && null !== $this->options['endpoint_max_length']) {
+            $endpoint = \substr($endpoint, 0, $this->options['endpoint_max_length']);
+        }
+        if (null !== $method && null !== $this->options['method_max_length']) {
+            $method = \substr($method, 0, $this->options['method_max_length']);
+        }
+        if (null !== $reference && null !== $this->options['reference_max_length']) {
+            $reference = \substr($reference, 0, $this->options['reference_max_length']);
+        }
+
         $apiCall = $this->apiCallFactory->create();
         $apiCall
             ->setRequest($processedRequest)
             ->setEndpoint($endpoint)
-            ->setMethod($appMethod)
+            ->setMethod($method)
             ->setReference($reference)
             ->setRequestTime($requestTime ?? \microtime(true))
         ;
@@ -95,6 +122,16 @@ class ApiCallLogger implements ApiCallLoggerInterface
             ->setResponse($processedResponse)
             ->setDuration($duration)
         ;
+
+        if (null !== $apiCall->getEndpoint() && null !== $this->options['endpoint_max_length']) {
+            $apiCall->setEndpoint(\substr($apiCall->getEndpoint(), 0, $this->options['endpoint_max_length']));
+        }
+        if (null !== $apiCall->getMethod() && null !== $this->options['method_max_length']) {
+            $apiCall->setMethod(\substr($apiCall->getMethod(), 0, $this->options['method_max_length']));
+        }
+        if (null !== $apiCall->getReference() && null !== $this->options['reference_max_length']) {
+            $apiCall->setReference(\substr($apiCall->getReference(), 0, $this->options['reference_max_length']));
+        }
 
         $this->handleApiCall($apiCall);
     }
