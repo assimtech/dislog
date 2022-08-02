@@ -38,12 +38,12 @@ class StringSerializerSpec extends ObjectBehavior
         $apiCall->getEndpoint()->willReturn($endpoint);
         $apiCall->getReference()->willReturn($reference);
 
-        $data = json_encode([
+        $data = \json_encode([
            'duration' => $duration,
            'request' => $request,
            'response' => $response,
         ]);
-        $expectedString = sprintf(
+        $expectedString = \sprintf(
             '[%s] (%s) %s (%s) | %s - %s%s',
             $dateTimeFormatted,
             $identity,

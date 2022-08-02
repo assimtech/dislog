@@ -25,7 +25,7 @@ class StreamSpec extends ObjectBehavior
         Dislog\Serializer\SerializerInterface $serializer,
         Dislog\Model\ApiCallInterface $apiCall
     ) {
-        $stream = fopen('php://temp', 'a+');
+        $stream = \fopen('php://temp', 'a+');
         $this->beConstructedWith($stream, $identityGenerator, $serializer);
 
         $identity = 'my id';
@@ -39,9 +39,9 @@ class StreamSpec extends ObjectBehavior
 
         $this->handle($apiCall);
 
-        $writtenData = stream_get_contents($stream, -1, 0);
+        $writtenData = \stream_get_contents($stream, -1, 0);
         if ($writtenData !== $serializedApiCall) {
-            throw new \RuntimeException(sprintf(
+            throw new \RuntimeException(\sprintf(
                 "Written data did not match expected data:\nWritten: %s\nExpected: %s",
                 $writtenData,
                 $serializedApiCall
@@ -54,7 +54,7 @@ class StreamSpec extends ObjectBehavior
         Dislog\Serializer\SerializerInterface $serializer,
         Dislog\Model\ApiCallInterface $apiCall
     ) {
-        $stream = fopen('php://temp', 'a+');
+        $stream = \fopen('php://temp', 'a+');
         $this->beConstructedWith($stream, $identityGenerator, $serializer);
 
         $identity = 'my id';
@@ -66,9 +66,9 @@ class StreamSpec extends ObjectBehavior
 
         $this->handle($apiCall);
 
-        $writtenData = stream_get_contents($stream, -1, 0);
+        $writtenData = \stream_get_contents($stream, -1, 0);
         if ($writtenData !== $serializedApiCall) {
-            throw new \RuntimeException(sprintf(
+            throw new \RuntimeException(\sprintf(
                 "Written data did not match expected data:\nWritten: %s\nExpected: %s",
                 $writtenData,
                 $serializedApiCall

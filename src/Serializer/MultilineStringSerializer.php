@@ -8,7 +8,7 @@ use Assimtech\Dislog;
 
 class MultilineStringSerializer implements SerializerInterface
 {
-    protected $eol;
+    protected string $eol;
 
     public function __construct(
         string $eol = "\n"

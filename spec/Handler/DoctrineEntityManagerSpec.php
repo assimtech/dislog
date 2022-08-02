@@ -23,8 +23,7 @@ class DoctrineEntityManagerSpec extends ObjectBehavior
 
     function it_can_remove_objects(
         ORM\EntityManagerInterface $entityManager,
-        ORM\AbstractQuery $query,
-        Dislog\Model\ApiCallInterface $apiCall
+        ORM\AbstractQuery $query
     ) {
         $entityClass = Dislog\Model\ApiCall::class;
         $expectedDql = <<<"DQL"

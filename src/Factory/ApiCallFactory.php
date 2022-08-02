@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Factory;
 
-use Assimtech\Dislog\Model;
+use Assimtech\Dislog;
 
 class ApiCallFactory implements FactoryInterface
 {
-    public function create(): Model\ApiCallInterface
+    public function create(): Dislog\Model\ApiCallInterface
     {
-        return new Model\ApiCall();
+        return new Dislog\Model\ApiCall();
     }
 }

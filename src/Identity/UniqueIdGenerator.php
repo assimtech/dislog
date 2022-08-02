@@ -8,6 +8,6 @@ class UniqueIdGenerator implements IdentityGeneratorInterface
 {
     public function getIdentity(): string
     {
-        return uniqid();
+        return \uniqid();
     }
 }

@@ -9,8 +9,8 @@ namespace Assimtech\Dislog\Processor;
  */
 class RegexReplace implements ProcessorInterface
 {
-    protected $search;
-    protected $replace;
+    protected string $search;
+    protected string $replace;
 
     public function __construct(
         string $search,
@@ -27,6 +27,6 @@ class RegexReplace implements ProcessorInterface
             return null;
         }
 
-        return preg_replace($this->search, $this->replace, $payload);
+        return \preg_replace($this->search, $this->replace, $payload);
     }
 }

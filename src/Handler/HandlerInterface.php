@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog;
 
 interface HandlerInterface
 {
@@ -12,7 +12,7 @@ interface HandlerInterface
      * Record / update an apiCall log
      */
     public function handle(
-        ApiCallInterface $apiCall
+        Dislog\Model\ApiCallInterface $apiCall
     ): void;
 
     /**

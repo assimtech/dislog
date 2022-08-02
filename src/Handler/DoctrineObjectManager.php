@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
+use Assimtech\Dislog;
 
 class DoctrineObjectManager implements HandlerInterface
 {
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectManager|\Doctrine\Persistence\ObjectManager $objectManager
+     */
     protected $objectManager;
 
     /**
@@ -20,7 +23,7 @@ class DoctrineObjectManager implements HandlerInterface
     }
 
     public function handle(
-        ApiCallInterface $apiCall
+        Dislog\Model\ApiCallInterface $apiCall
     ): void {
         $this->objectManager->persist($apiCall);
         $this->objectManager->flush();

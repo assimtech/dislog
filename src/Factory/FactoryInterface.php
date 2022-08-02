@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Factory;
 
-use Assimtech\Dislog\Model;
+use Assimtech\Dislog;
 
 interface FactoryInterface
 {
-    public function create(): Model\ApiCallInterface;
+    public function create(): Dislog\Model\ApiCallInterface;
 }

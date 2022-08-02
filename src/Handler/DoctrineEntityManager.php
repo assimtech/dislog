@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Model\ApiCall;
-use Doctrine\ORM\EntityManagerInterface;
+use Assimtech\Dislog;
+use Doctrine\ORM;
 
 class DoctrineEntityManager extends DoctrineObjectManager
 {
-    private $entityClass;
-    private $requestDateField;
+    private string $entityClass;
+    private string $requestDateField;
 
     public function __construct(
-        EntityManagerInterface $objectManager,
-        string $entityClass = ApiCall::class,
+        ORM\EntityManagerInterface $objectManager,
+        string $entityClass = Dislog\Model\ApiCall::class,
         string $requestDateField = 'requestDateTime'
     ) {
         parent::__construct($objectManager);

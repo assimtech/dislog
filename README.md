@@ -65,7 +65,6 @@ if (200 !== $response->getStatusCode()) {
 }
 ```
 
-
 ### ApiCallLogger
 
 The `ApiCallLogger` may be used to record requests and responses to both client and server side apis. Request and response payloads are both optional. If you are recording an FTP file upload, there may not be a response on successful upload. You would still invoke `logResponse` however to indicate the server accepted the file.

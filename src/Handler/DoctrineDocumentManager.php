@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog\Handler;
 
-use Assimtech\Dislog\Model\ApiCall;
-use Doctrine\ODM\MongoDB\DocumentManager;
+use Assimtech\Dislog;
+use Doctrine\ODM;
 
 class DoctrineDocumentManager extends DoctrineObjectManager
 {
-    private $documentClass;
-    private $requestDateField;
+    private string $documentClass;
+    private string $requestDateField;
 
     public function __construct(
-        DocumentManager $objectManager,
-        string $documentClass = ApiCall::class,
+        ODM\MongoDB\DocumentManager $objectManager,
+        string $documentClass = Dislog\Model\ApiCall::class,
         string $requestDateField = 'request_datetime'
     ) {
         parent::__construct($objectManager);

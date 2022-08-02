@@ -7,14 +7,13 @@ namespace spec\Assimtech\Dislog;
 use Assimtech\Dislog;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use Psr\Log\LoggerInterface;
 
 class ApiCallLoggerSpec extends ObjectBehavior
 {
     function let(
         Dislog\Factory\FactoryInterface $factory,
         Dislog\Handler\HandlerInterface $handler,
-        LoggerInterface $psrLogger
+        \Psr\Log\LoggerInterface $psrLogger
     ) {
         $options = [];
         $this->beConstructedWith($factory, $handler, $options, $psrLogger);
@@ -98,7 +97,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         Dislog\Factory\FactoryInterface $factory,
         Dislog\Handler\HandlerInterface $handler,
         Dislog\Model\ApiCallInterface $apiCall,
-        LoggerInterface $psrLogger
+        \Psr\Log\LoggerInterface $psrLogger
     ) {
         $apiCallId = 'my id';
         $request = 'my request';
@@ -165,7 +164,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
     function it_cant_log_response_with_psr_logger(
         Dislog\Handler\HandlerInterface $handler,
         Dislog\Model\ApiCallInterface $apiCall,
-        LoggerInterface $psrLogger
+        \Psr\Log\LoggerInterface $psrLogger
     ) {
         $apiCallId = 'my id';
         $request = 'my request';
@@ -209,7 +208,7 @@ class ApiCallLoggerSpec extends ObjectBehavior
         Dislog\Factory\FactoryInterface $factory,
         Dislog\Handler\HandlerInterface $handler,
         Dislog\Model\ApiCallInterface $apiCall,
-        LoggerInterface $psrLogger
+        \Psr\Log\LoggerInterface $psrLogger
     ) {
         $options = [
             'suppress_handler_exceptions' => false,
