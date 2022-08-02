@@ -18,13 +18,9 @@ interface LoggingHttpClientInterface
     /**
      * @api
      *
-     * Logs the last ApiCall when self::sendRequest was used with $deferredLogging = true
-     *
-     * Returns the LastApiCallId (even if self::sendRequest was used with $deferredLogging = false)
-     *
-     * @return ?string Last ApiCall Id
+     * Log the last payload even if $omitPayload was used
      */
-    public function logLastApiCall(): ?string;
+    public function logLastPayload(): ?string;
 
     /**
      * @api
@@ -37,6 +33,6 @@ interface LoggingHttpClientInterface
         ?string $reference = null,
         /* callable[]|callable|null */ $requestProcessors = null,
         /* callable[]|callable|null */ $responseProcessors = null,
-        bool $deferredLogging = false
+        bool $omitPayload = false
     ): Http\Message\ResponseInterface;
 }

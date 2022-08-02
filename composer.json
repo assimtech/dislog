@@ -7,10 +7,10 @@
     "require": {
         "php": "^7.2.5|^8",
 
-        "symfony/options-resolver": "^3|^4|^5"
+        "symfony/options-resolver": "^3|^4|^5|^6"
     },
     "require-dev": {
-        "doctrine/common": "^2",
+        "doctrine/common": "^2|^3",
         "doctrine/orm": "^2",
         "guzzlehttp/psr7": "^1.7|^2",
         "psr/http-client": "^1",

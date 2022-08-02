@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace Assimtech\Dislog;
 
-use Assimtech\Dislog\Model\ApiCallInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver;
 
 class ApiCallLogger implements ApiCallLoggerInterface
 {
-    protected $apiCallFactory;
-    protected $handler;
-    protected $options;
-    protected $psrLogger;
+    protected Factory\FactoryInterface $apiCallFactory;
+    protected Handler\HandlerInterface $handler;
+
+    /**
+     * @var array<string,bool|int|null> $options
+     */
+    protected array $options;
+    protected ?\Psr\Log\LoggerInterface $psrLogger;
 
     public function __construct(
         Factory\FactoryInterface $apiCallFactory,
         Handler\HandlerInterface $handler,
         array $options = [],
-        ?LoggerInterface $psrLogger = null
+        ?\Psr\Log\LoggerInterface $psrLogger = null
     ) {
-        $resolver = (new OptionsResolver())
+        $resolver = (new OptionsResolver\OptionsResolver())
             ->setDefaults([
                 'suppress_handler_exceptions' => true,
                 'endpoint_max_length' => null,
@@ -68,8 +70,11 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $this->psrLogger = $psrLogger;
     }
 
+    /**
+     * @param callable[]|callable|null $processors
+     */
     protected function processPayload(
-        /* callable[]|callable|null */ $processors,
+        $processors,
         ?string $payload
     ): ?string {
         if ($payload === null) {
@@ -90,14 +95,17 @@ class ApiCallLogger implements ApiCallLoggerInterface
         return $payload;
     }
 
+    /**
+     * @param callable[]|callable|null $processors
+     */
     public function logRequest(
         ?string $request,
         ?string $endpoint,
         ?string $method,
         ?string $reference = null,
-        /* callable[]|callable|null */ $processors = null,
+        $processors = null,
         ?float $requestTime = null
-    ): ApiCallInterface {
+    ): Model\ApiCallInterface {
         $processedRequest = $this->processPayload($processors, $request);
 
         if (null !== $endpoint && null !== $this->options['endpoint_max_length']) {
@@ -124,12 +132,19 @@ class ApiCallLogger implements ApiCallLoggerInterface
         return $apiCall;
     }
 
+    /**
+     * @param callable[]|callable|null $processors
+     */
     public function logResponse(
-        ApiCallInterface $apiCall,
+        Model\ApiCallInterface $apiCall,
         ?string $response = null,
-        /* callable[]|callable|null */ $processors = null
+        $processors = null,
+        ?float $responseTime = null
     ): void {
-        $duration = \microtime(true) - $apiCall->getRequestTime();
+        if (null === $responseTime) {
+            $responseTime = \microtime(true);
+        }
+        $duration = $responseTime - $apiCall->getRequestTime();
 
         $processedResponse = $this->processPayload($processors, $response);
 
@@ -151,8 +166,24 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $this->handleApiCall($apiCall);
     }
 
+    public function logPayload(
+        Model\ApiCallInterface $apiCall,
+        ?string $request,
+        /* callable[]|callable|null */ $requestProcessors,
+        ?string $response,
+        /* callable[]|callable|null */ $responseProcessors
+    ): ?string {
+        $apiCall
+            ->setRequest($this->processPayload($requestProcessors, $request))
+            ->setResponse($this->processPayload($responseProcessors, $response))
+        ;
+        $this->handleApiCall($apiCall);
+
+        return $apiCall->getId();
+    }
+
     protected function handleApiCall(
-        ApiCallInterface $apiCall
+        Model\ApiCallInterface $apiCall
     ): void {
         try {
             $this->handler->handle($apiCall);
@@ -168,7 +199,7 @@ class ApiCallLogger implements ApiCallLoggerInterface
 
     protected function logHandlerThrowable(
         \Throwable $throwable,
-        ApiCallInterface $apiCall
+        Model\ApiCallInterface $apiCall
     ): void {
         if ($this->psrLogger === null) {
             return;

@@ -12,15 +12,19 @@ class LoggingHttpClient implements LoggingHttpClientInterface
     private Http\Client\ClientInterface $httpClient;
     private ApiCallLoggerInterface $apiCallLogger;
 
-    private ?string $lastApiCallId = null;
+    private ?Model\ApiCallInterface $lastApiCall = null;
 
-    private ?Http\Message\RequestInterface $lastRequest = null;
-    private ?Http\Message\ResponseInterface $lastResponse = null;
-    private ?string $lastAppMethod = null;
-    private ?string $lastReference = null;
-    private /* callable[]|callable|null */ $lastRequestProcessors = null;
-    private /* callable[]|callable|null */ $lastResponseProcessors = null;
-    private ?float $lastRequestTime = null;
+    /**
+     * @var callable[]|callable|null $lastRequestProcessors
+     */
+    private $lastRequestProcessors = null;
+    private ?string $lastRequest = null;
+
+    /**
+     * @var callable[]|callable|null $lastResponseProcessors
+     */
+    private $lastResponseProcessors = null;
+    private ?string $lastResponse = null;
 
     public function __construct(
         Http\Client\ClientInterface $httpClient,
@@ -30,104 +34,15 @@ class LoggingHttpClient implements LoggingHttpClientInterface
         $this->apiCallLogger = $apiCallLogger;
     }
 
-    private function setDeferredRequest(
-        Http\Message\RequestInterface $request,
-        ?string $appMethod = null,
-        ?string $reference = null,
-        /* callable[]|callable|null */ $requestProcessors = null,
-        /* callable[]|callable|null */ $responseProcessors = null
-    ): void {
-        $this->lastRequest = $request;
-        $this->lastAppMethod = $appMethod;
-        $this->lastReference = $reference;
-        $this->lastRequestProcessors = $requestProcessors;
-        $this->lastResponseProcessors = $responseProcessors;
-        $this->lastRequestTime = \microtime(true);
-    }
-
-    private function setDeferredResponse(
-        Http\Message\ResponseInterface $response
-    ): void {
-        $this->lastResponse = $response;
-    }
-
-    private function resetLastApiCallId(): self
+    private function resetLast(): self
     {
-        $this->lastApiCallId = null;
-
-        return $this;
-    }
-
-    private function resetDeferredApiCall(): self
-    {
-        $this->lastRequest = null;
-        $this->lastResponse = null;
-        $this->lastAppMethod = null;
-        $this->lastReference = null;
+        $this->lastApiCall = null;
         $this->lastRequestProcessors = null;
+        $this->lastRequest = null;
         $this->lastResponseProcessors = null;
-        $this->lastRequestTime = null;
+        $this->lastResponse = null;
 
         return $this;
-    }
-
-    private function logRequest(
-        Http\Message\RequestInterface $request,
-        ?string $appMethod,
-        ?string $reference = null,
-        /* callable[]|callable|null */ $requestProcessors = null,
-        ?float $requestTime = null
-    ): Model\ApiCallInterface {
-        $loggedApiCall = $this->apiCallLogger->logRequest(
-            GuzzlePsr7\Message::toString($request),
-            (string) $request->getUri(),
-            $appMethod,
-            $reference,
-            $requestProcessors,
-            $requestTime
-        );
-
-        $this->lastApiCallId = (string) $loggedApiCall->getId();
-
-        return $loggedApiCall;
-    }
-
-    private function logResponse(
-        Model\ApiCallInterface $loggedApiCall,
-        Http\Message\ResponseInterface $response,
-        /* callable[]|callable|null */ $responseProcessors = null
-    ): void {
-        $this->apiCallLogger->logResponse(
-            $loggedApiCall,
-            GuzzlePsr7\Message::toString($response),
-            $responseProcessors
-        );
-    }
-
-    /**
-     * @api
-     */
-    public function logLastApiCall(): ?string
-    {
-        if (null === $this->lastRequestTime) {
-            // Logging was disabled, just proxy to getLastApiCallId for ease of use
-            return $this->getLastApiCallId();
-        }
-
-        $loggedApiCall = $this->logRequest(
-            $this->lastRequest,
-            $this->lastAppMethod,
-            $this->lastReference,
-            $this->lastRequestProcessors,
-            $this->lastRequestTime
-        );
-        $this->logResponse(
-            $loggedApiCall,
-            $this->lastResponse,
-            $this->lastResponseProcessors
-        );
-
-        return $this->getLastApiCallId();
     }
 
     /**
@@ -135,7 +50,24 @@ class LoggingHttpClient implements LoggingHttpClientInterface
      */
     public function getLastApiCallId(): ?string
     {
-        return $this->lastApiCallId;
+        return $this->lastApiCall
+            ? $this->lastApiCall->getId()
+            : null
+        ;
+    }
+
+    /**
+     * @api
+     */
+    public function logLastPayload(): ?string
+    {
+        return $this->apiCallLogger->logPayload(
+            $this->lastApiCall,
+            $this->lastRequest,
+            $this->lastRequestProcessors,
+            $this->lastResponse,
+            $this->lastResponseProcessors
+        );
     }
 
     /**
@@ -147,41 +79,33 @@ class LoggingHttpClient implements LoggingHttpClientInterface
         ?string $reference = null,
         /* callable[]|callable|null */ $requestProcessors = null,
         /* callable[]|callable|null */ $responseProcessors = null,
-        bool $deferredLogging = false
+        bool $omitPayload = false
     ): Http\Message\ResponseInterface {
-        $this
-            ->resetLastApiCallId()
-            ->resetDeferredApiCall()
-        ;
+        $this->resetLast();
 
-        $loggedApiCall = null;
         if (null !== $appMethod) {
-            if ($deferredLogging) {
-                $this->setDeferredRequest(
-                    $request,
-                    $appMethod,
-                    $reference,
-                    $requestProcessors,
-                    $responseProcessors
-                );
-            } else {
-                $loggedApiCall = $this->logRequest(
-                    $request,
-                    $appMethod,
-                    $reference,
-                    $requestProcessors
-                );
-            }
+            $this->lastApiCall = $this->apiCallLogger->logRequest(
+                $omitPayload ? null : GuzzlePsr7\Message::toString($request),
+                (string) $request->getUri(),
+                $appMethod,
+                $reference,
+                $requestProcessors
+            );
         }
 
         $response = $this->httpClient->sendRequest($request);
 
-        if ($deferredLogging) {
-            $this->setDeferredResponse($response);
-        } elseif (null !== $loggedApiCall) {
-            $this->logResponse(
-                $loggedApiCall,
-                $response,
+        if (null !== $appMethod) {
+            if ($omitPayload) {
+                $this->lastRequestProcessors = $requestProcessors;
+                $this->lastRequest = GuzzlePsr7\Message::toString($request);
+                $this->lastResponseProcessors = $responseProcessors;
+                $this->lastResponse = GuzzlePsr7\Message::toString($response);
+            }
+
+            $this->apiCallLogger->logResponse(
+                $this->lastApiCall,
+                $omitPayload ? null : GuzzlePsr7\Message::toString($response),
                 $responseProcessors
             );
         }

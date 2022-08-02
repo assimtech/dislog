@@ -6,7 +6,7 @@ namespace Assimtech\Dislog\Model;
 
 class ApiCall implements ApiCallInterface
 {
-    protected $id = null;
+    protected ?string $id = null;
     protected ?string $endpoint = null;
     protected ?string $method = null;
     protected ?string $reference = null;
@@ -16,21 +16,15 @@ class ApiCall implements ApiCallInterface
     protected ?string $request = null;
     protected ?string $response = null;
 
-    /**
-     * @param integer|string $id
-     */
     public function setId(
-        $id
+        ?string $id
     ): ApiCallInterface {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return integer|string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }

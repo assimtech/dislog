@@ -42,13 +42,14 @@ $response = $loggingHttpClient->sendRequest(
     /* ?string */ $reference = null, // The reference for this specific call (e.g. id or key if available), helps with searching API logs
     /* callable[]|callable|null */ $requestProcessors = null, // Processors to apply to $request, see Processors section below
     /* callable[]|callable|null */ $responseProcessors = null, // Processors to apply to $response, see Processors section below
-    /* bool */ $deferredLogging = false // If set to true, API calls will only be logged if LoggingHttpClient::logLastApiCall() is called after the request is sent
+    /* bool */ $omitPayload = false, // If set to true, request/response will not be logged however metadata will, useful for monitoring without logging full request or response
 );
 ```
 
-#### Deferred Logging
+#### Payload omission
 
-If you only want to log based on certain responses you can use `$deferredLogging`:
+If you only want to log metadata (everything except for the raw request / response) on certain responses you can use `$omitPayload`.
+If you decide after making the API call you DO want to log the raw request / response you may force the payload to be logged.
 
 ```php
 $response = $loggingHttpClient->sendRequest(
@@ -57,12 +58,13 @@ $response = $loggingHttpClient->sendRequest(
     $reference,
     $requestProcessors,
     $responseProcessors,
-    true // $deferredLogging - Logging will not happen unless LoggingHttpClient::logLastApiCall() is called
+    true, // $omitPayload - Do not log raw request / response but still log all other metadata, this allows us to still monitor api calls
 );
 if (200 !== $response->getStatusCode()) {
-    $loggingHttpClient->logLastApiCall();
+    $loggingHttpClient->logLastPayload();
 }
 ```
+
 
 ### ApiCallLogger
 

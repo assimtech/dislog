@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace spec\Assimtech\Dislog;
 
 use Assimtech\Dislog;
-use GuzzleHttp\Psr7 as GuzzlePsr7;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http;
-use Psr\Log\LoggerInterface;
 
 class LoggingHttpClientSpec extends ObjectBehavior
 {
@@ -57,12 +55,8 @@ class LoggingHttpClientSpec extends ObjectBehavior
             $endpoint,
             $appMethod,
             $reference,
-            $requestProcessors,
-            null
-        )
-            ->shouldBeCalled()
-            ->willReturn($apiCall)
-        ;
+            $requestProcessors
+        )->willReturn($apiCall);
 
         $apiCallLogger->logResponse(
             $apiCall,
@@ -105,7 +99,7 @@ class LoggingHttpClientSpec extends ObjectBehavior
         $this->sendRequest($request)->shouldReturn($response);
     }
 
-    function it_can_defer_logging(
+    function it_can_omit_payload(
         Http\Client\ClientInterface $httpClient,
         Dislog\ApiCallLogger $apiCallLogger,
         Http\Message\UriInterface $uri,
@@ -136,24 +130,19 @@ class LoggingHttpClientSpec extends ObjectBehavior
         $request->getHeaders()->willReturn([]);
         $request->getBody()->willReturn('');
 
-        $requestProphecy = $apiCallLogger->logRequest(
-            Argument::type('string'),
+        $apiCallLogger->logRequest(
+            null,
             $endpoint,
             $appMethod,
             $reference,
-            $requestProcessors,
-            Argument::type('float')
-        );
+            $requestProcessors
+        )->willReturn($apiCall)->shouldBeCalled();
 
-        $requestProphecy->shouldNotBeCalled();
-
-        $responseProphecy = $apiCallLogger->logResponse(
+        $apiCallLogger->logResponse(
             $apiCall,
-            Argument::type('string'),
+            null,
             $responseProcessors
-        );
-
-        $responseProphecy->shouldNotBeCalled();
+        )->shouldBeCalled();
 
         $httpClient->sendRequest($request)->willReturn($response);
 
@@ -172,15 +161,14 @@ class LoggingHttpClientSpec extends ObjectBehavior
             true
         )->shouldReturn($response);
 
-        $requestProphecy
-            ->shouldBeCalled()
-            ->willReturn($apiCall)
-        ;
+        $apiCallLogger->logPayload(
+            $apiCall,
+            Argument::type('string'),
+            $requestProcessors,
+            Argument::type('string'),
+            $responseProcessors
+        )->shouldBeCalled();
 
-        $responseProphecy
-            ->shouldBeCalled()
-        ;
-
-        $this->logLastApiCall();
+        $this->logLastPayload();
     }
 }
