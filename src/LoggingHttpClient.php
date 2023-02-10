@@ -12,6 +12,7 @@ class LoggingHttpClient implements LoggingHttpClientInterface
     private Http\Client\ClientInterface $httpClient;
     private ApiCallLoggerInterface $apiCallLogger;
 
+    private bool $lastPayloadCached = false;
     private ?Model\ApiCallInterface $lastApiCall = null;
 
     /**
@@ -36,6 +37,7 @@ class LoggingHttpClient implements LoggingHttpClientInterface
 
     private function resetLast(): self
     {
+        $this->lastPayloadCached = false;
         $this->lastApiCall = null;
         $this->lastRequestProcessors = null;
         $this->lastRequest = null;
@@ -61,6 +63,10 @@ class LoggingHttpClient implements LoggingHttpClientInterface
      */
     public function logLastPayload(): ?string
     {
+        if (!$this->lastPayloadCached) {
+            return $this->getLastApiCallId();
+        }
+
         return $this->apiCallLogger->logPayload(
             $this->lastApiCall,
             $this->lastRequest,
@@ -97,6 +103,7 @@ class LoggingHttpClient implements LoggingHttpClientInterface
 
         if (null !== $appMethod) {
             if ($omitPayload) {
+                $this->lastPayloadCached = true;
                 $this->lastRequestProcessors = $requestProcessors;
                 $this->lastRequest = GuzzlePsr7\Message::toString($request);
                 $this->lastResponseProcessors = $responseProcessors;
