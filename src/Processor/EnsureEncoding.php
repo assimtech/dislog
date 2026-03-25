@@ -44,7 +44,6 @@ class EnsureEncoding implements ProcessorInterface
             $this->psrLogger->warning($exception->getMessage(), [
                 'encoding' => $this->encoding,
                 'exception' => $exception,
-                'payload' => $payload,
             ]);
         }
 

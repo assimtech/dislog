@@ -33,8 +33,6 @@ class EnsureEncodingSpec extends ObjectBehavior
             Argument::that(function ($context) {
                 return isset($context['encoding'])
                     && $context['encoding'] === 'UTF-8'
-                    && isset($context['payload'])
-                    && $context['payload'] === "\xFF"
                     && isset($context['exception'])
                     && $context['exception'] instanceof \InvalidArgumentException;
             })
@@ -78,8 +76,6 @@ class EnsureEncodingSpec extends ObjectBehavior
             Argument::that(function ($context) {
                 return isset($context['encoding'])
                     && $context['encoding'] === 'UTF-8'
-                    && isset($context['payload'])
-                    && $context['payload'] === "\xFF"
                     && isset($context['exception'])
                     && $context['exception'] instanceof \InvalidArgumentException;
             })
