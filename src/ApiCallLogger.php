@@ -70,6 +70,19 @@ class ApiCallLogger implements ApiCallLoggerInterface
         $this->psrLogger = $psrLogger;
     }
 
+    private static function containsProcessor(
+        array $processors,
+        string $className
+    ): bool {
+        foreach ($processors as $processor) {
+            if ($processor instanceof $className) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param callable[]|callable|null $processors
      */
@@ -86,6 +99,11 @@ class ApiCallLogger implements ApiCallLoggerInterface
         }
         if (!\is_array($processors) && !$processors instanceof \Traversable) {
             $processors = [ $processors ];
+        }
+
+        if (!self::containsProcessor($processors, Processor\EnsureEncoding::class)) {
+            // Lastly, ensure payload is valid UTF-8
+            $processors[] = new Processor\EnsureEncoding('UTF-8', 'base64_encode', $this->psrLogger);
         }
 
         foreach ($processors as $processor) {

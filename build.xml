@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="assimtech/dislog" default="dev">
+<project name="assimtech/dislog" default="ci">
+    <target name="ci" depends="lint-php,cpd,cs,spec"/>
 
-    <target name="dev" depends="lint,cpd,cs,spec"/>
-
-    <target name="lint">
+    <target name="lint-php">
         <phplint
             cachefile="php-lint.cache"
             haltonfailure="true"
@@ -16,24 +15,29 @@
     </target>
 
     <target name="cpd">
-        <exec
-            command="vendor/bin/phpcpd src"
-            checkreturn="true"
-        />
+        <exec executable="vendor/bin/phpcpd" checkreturn="true">
+            <arg path="src" />
+        </exec>
     </target>
 
     <target name="cs">
-        <exec
-            command="vendor/bin/phpcs -p --standard=phpcs.xml --extensions=php src"
+        <phpcs
+            bin="vendor/bin/phpcs"
+            standard="phpcs.xml"
+            file="src"
             checkreturn="true"
         />
     </target>
 
     <target name="spec">
         <exec
-            command="vendor/bin/phpspec run --no-interaction --stop-on-failure"
+            executable="vendor/bin/phpspec"
             checkreturn="true"
-        />
+            passthru="true"
+        >
+            <arg value="run"/>
+            <arg value="--no-interaction"/>
+            <arg value="--stop-on-failure"/>
+        </exec>
     </target>
-
 </project>
